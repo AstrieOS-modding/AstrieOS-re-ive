@@ -1,0 +1,50 @@
+/* Fredoka */
+@font-face {
+    font-family: Fredoka;
+    font-display: swap;
+    font-weight: 400;
+    src: url(Fredoka/Fredoka-Regular.ttf);
+}
+
+@font-face {
+    font-family: Fredoka;
+    font-display: swap;
+    font-weight: 500;
+    src: url(Fredoka/Fredoka-Medium.ttf);
+}
+
+@font-face {
+    font-family: Fredoka;
+    font-display: swap;
+    font-weight: 600;
+    src: url(Fredoka/Fredoka-SemiBold.ttf);
+}
+
+/* Google sans */
+@font-face {
+    font-family: Google-sans;
+    font-display: swap;
+    font-weight: 400;
+    src: url(Google-sans/GoogleSans-Regular.ttf);
+}
+
+@font-face {
+    font-family: Google-sans;
+    font-display: swap;
+    font-weight: 500;
+    src: url(Google-sans/GoogleSans-Medium.ttf);
+}
+
+@font-face {
+    font-family: Google-sans;
+    font-display: swap;
+    font-weight: 600;
+    src: url(Google-sans/GoogleSans-SemiBold.ttf);
+}
+
+@font-face {
+    font-family: Google-sans;
+    font-display: swap;
+    font-weight: 700;
+    src: url(Google-sans/GoogleSans-Bold.ttf);
+}

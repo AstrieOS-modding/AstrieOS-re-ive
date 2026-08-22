@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AstrieOS-recode!</title>
+        <link rel="stylesheet" href="index.css">
+        <link rel="stylesheet" href="Res/Font/font.css">
+    </head>
+    <body>
+        <!-- Laden-overlay -->
+        <div class="Ladenoverlay">
+            <div class="Ladencontent">
+                <div class="Ladenheader">
+                    <h2>AstrieOS! - re.ive</h2>
+                </div>
+                <div class="Ladenlivetracken">
+                    <span id="Laden-nummer">0%</span>
+                    <br>
+                    <span class="Laden-file" id="text-file">nichts_zutun.html</span>
+                </div>
+                <div class="Ladentext">
+                    <div class="Laden-passion"><p>Ein schätz projekt und (nicht) passion Projekt!</p><img src="/Res/Bild/Icon/favorite_24dp_FEC8C8_FILL1_wght400_GRAD0_opsz24.svg"></div>
+                    <p class="tiptext">2026.8.19 - in-dev!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop-hintergrund -->
+        <div class="Desktop-hintergrund">
+            <img class="Desktop-wallpaper" src="/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg">
+        </div>
+
+        <!-- Topbar -->
+        <div class="Topbar-ui">
+            <div class="Topbar-content">
+                <div class="Topbar-links">
+                    <div class="Nutzerui" onclick="placeholder_user()">
+                        <img width="64" height="64" class="Nutzerpfp" id="userpfp" src="/Res/Bild/Logo/AddText_07-03-07.27.32.png">
+                        <p><span id="username">Gast!</span></p>
+                    </div>
+                    <div class="Topbar-linie"></div>
+                    <div class="Topbar-btn"><img src="/Res/Bild/Icon/Topbar/music_note_2_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"></div>
+                    <div class="Topbar-btn"><img src="/Res/Bild/Icon/Topbar/trophy_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"></div>
+                    <div class="Topbar-btn"><img src="/Res/Bild/Icon/Topbar/alarm_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p><span id="User-timezone">00:00:00</span></p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Untertitel
+            wann etwas ein soundeffekt oder voice text wird convert zur text!
+            (sehr cool für modding! :D)
+        -->
+        <div class="Untertitel-ui">
+            <div class="Untertitel-content">
+                <div class="Untertitel-text"><p><span id="subtitles-text">Hallo, das ist ein test!</span></p></div>
+            </div>
+        </div>
+
+        <!-- Taskbar -->
+        <div class="Taskbar-ui">
+            <div class="Taskbar-content">
+                <div class="Taskbar-app" onclick="placeholder_setting()" ><img src="/Res/Bild/Icon/Topbar/settings_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Einstellungen</p></div>
+                <div class="Taskbar-app"><img src="/Res/Bild/Icon/Topbar/folder_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Datein</p></div>
+                <div class="Taskbar-app"><img src="/Res/Bild/Icon/Topbar/globe_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Browser</p></div>
+                <div class="Taskbar-app"><img src="/Res/Bild/Icon/Topbar/local_library_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Modding Bibliothek</p></div>
+                <div class="Taskbar-app"><img src="/Res/Bild/Icon/Topbar/handyman_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Mod Loader</p></div>
+            </div>
+        </div>
+        <script src="/JavaScript/ui.js"></script>
+        <script src="/JavaScript/toggle.js"></script>
+        <script src="/JavaScript/Ladenoverlay.js"></script>
+        <script src="/JavaScript/Hintergrund-tracking.js"></script>
+        <script src="/JavaScript/Nutzeruhr.js"></script>
+        <script src="/JavaScript/untertitlel_system.js"></script>
+    </body>
+</html>

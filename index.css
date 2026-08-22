@@ -1,0 +1,308 @@
+body {
+    padding: 0;
+    margin: 0;
+    color: #ffffff;
+    -webkit-tap-highlight-color: transparent;
+    font-family: Google-sans;
+    cursor: default;
+}
+
+.Ladenoverlay {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
+    background-image: linear-gradient(24deg, #e0a0ff, #000000);
+    color: #ffffff;
+    z-index: 10000000;
+    pointer-events: all;
+}
+
+.Ladenheader {
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 0.4;
+    animation: Coolheader 0.7s ease;
+}
+
+@keyframes Coolheader {
+    0% { opacity: 0; color: #e0a0ff; transform: translateY(8px); }
+    100% { opacity: 1; color: #ffffff; transform: translateY(0px); }
+}
+
+.Ladenlivetracken {
+    font-weight: 600;
+    font-size: 1.35rem;
+}
+
+.Laden-file {
+    opacity: 0.4;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.Laden-passion {
+    display: flex;
+    gap: 8px;
+    align-content: center;
+    justify-content: center;
+    line-height: 0;
+}
+
+.tiptext {
+    line-height: 0;
+    opacity: 0.4;
+}
+
+.Ladenoverlay.fertig {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.Desktop-hintergrund {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.Desktop-wallpaper {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform-origin: center;
+    will-change: transform;
+}
+
+.Topbar-ui {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    gap: 8px;
+    top: 14px;
+    left: 14px;
+    z-index: 100000;
+}
+
+.Topbar-content {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    padding: 8px 18px;
+    backdrop-filter: blur(18px);
+    border-radius: 18px;
+    background-color: rgb(0 0 0 / 0.38);
+}
+
+.Topbar-links, .Topbar-rechts {
+    display: flex;
+    gap: 8px;
+}
+
+.Topbar-linie {
+    height: 100%;
+    width: 2px;
+    background-color: rgb(255 255 255 / 0.28);
+}
+
+.Nutzerui {
+    display: flex;
+    gap: 8px;
+    width: 240px;
+    border-radius: 14px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.Nutzerui:hover, .Topbar-btn:hover {
+    background-color: rgb(255 255 255 / 0.18);
+}
+
+.Nutzerpfp {
+    border-radius: 12px;
+}
+
+.Topbar-btn {
+    display: flex;
+    gap: 8px;
+    padding: 0 14px;
+    border-radius: 14px;
+    cursor: pointer;
+}
+
+.Taskbar-ui {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    bottom: 14px;
+    left: 0;
+    right: 0;
+    z-index: 100000;
+}
+
+.Untertitel-ui {
+    position: fixed;
+    display: none;
+    justify-content: center;
+    align-content: center;
+    bottom: 114px;
+    left: 0;
+    right: 0;
+    z-index: 100000;
+}
+
+.Untertitel-content {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 14px;
+    backdrop-filter: blur(18px);
+    background-color: rgb(0 0 0 / 0.38);
+}
+
+.Taskbar-content {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 18px;
+    backdrop-filter: blur(18px);
+    background-color: rgb(0 0 0 / 0.18);
+    transition: all 0.28s ease;
+}
+
+.Taskbar-content:hover {
+    background-color: rgb(0 0 0 / 0.38);
+    margin-bottom: 8px;
+}
+
+.Taskbar-app {
+    display: flex;
+    gap: 8px;
+    padding: 4px 14px;
+    border-radius: 14px;
+    transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+}
+
+.Taskbar-app img, .Topbar-btn img {
+    width: 32px;
+}
+
+.Taskbar-app:hover {
+    padding: 4px 38px;
+    background-color: rgb(255 255 255 / 0.25);
+}
+
+.PLaceholder-nutzercenter.Open, .Einstellungen-placeholder.Open {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+    background-color: rgb(0 0 0 / 0.28);
+    pointer-events: all;
+}
+
+.PLaceholder-nutzercenter, .Einstellungen-placeholder {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
+    backdrop-filter: blur(0px);
+    background-color: rgb(0 0 0 / 0);
+    color: #ffffff;
+    z-index: 5000000;
+    opacity: 0;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.Placeholder-close {
+    position: fixed;
+    display: flex;
+    top: 14px;
+    right: 24px;
+    padding: 12px 12px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.5);
+    cursor: pointer;
+}
+
+.Placeholder-header {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    line-height: 0;
+    font-size: 1.8rem;
+}
+
+.Placeholder-disclaimer {
+    opacity: 0.4;
+    font-size: 1rem;
+    font-style: italic;
+}
+
+.Placeholder-flex-button {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    gap: 8px;
+}
+
+.Placeholder-icon {
+    width: 32px;
+}
+
+.Placeholder-pfp-icon {
+    height: 100%;
+    border-radius: 14px;
+}
+
+.Placeholder-btn {
+    display: flex;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.48);
+    cursor: pointer;
+}
+
+.Placeholder-btn:hover, .Placeholder-close:hover {
+    background-color: rgb(255 255 255 / 0.28);
+}
+
+.Placeholder-dashboard {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: grid;
+    gap: 8px;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    padding: 18px 18px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.48);
+}
+
+.Placeholder-text-bold {
+    font-weight: 500;
+}
+
+.Placeholder-text {
+    opacity: 0.4;
+}
