@@ -7,6 +7,10 @@ body {
     cursor: default;
 }
 
+::selection {
+    background: transparent;
+}
+
 .Ladenoverlay {
     top: 0;
     left: 0;
@@ -100,6 +104,11 @@ body {
     padding: 8px 18px;
     backdrop-filter: blur(18px);
     border-radius: 18px;
+    background-color: rgb(0 0 0 / 0.18);
+    transition: all 0.28s ease;
+}
+
+.Topbar-content:hover {
     background-color: rgb(0 0 0 / 0.38);
 }
 
@@ -181,7 +190,7 @@ body {
     border-radius: 18px;
     backdrop-filter: blur(18px);
     background-color: rgb(0 0 0 / 0.18);
-    transition: all 0.28s ease;
+    transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .Taskbar-content:hover {
@@ -209,7 +218,7 @@ body {
 
 .PLaceholder-nutzercenter.Open, .Einstellungen-placeholder.Open {
     opacity: 1;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(18px);
     background-color: rgb(0 0 0 / 0.28);
     pointer-events: all;
 }
@@ -223,7 +232,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
     min-height: 100vh;
     backdrop-filter: blur(0px);
     background-color: rgb(0 0 0 / 0);
@@ -246,16 +254,18 @@ body {
 }
 
 .Placeholder-header {
-    margin-top: 8px;
-    margin-bottom: 8px;
+    position: fixed;
+    top: 14px;
+    left: 24px;
+    padding: 12px 12px;
+    border-radius: 14px;
     line-height: 0;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
 }
 
 .Placeholder-disclaimer {
     opacity: 0.4;
-    font-size: 1rem;
-    font-style: italic;
+    font-size: 0.8rem;
 }
 
 .Placeholder-flex-button {
@@ -275,15 +285,55 @@ body {
 }
 
 .Placeholder-btn {
+    box-sizing: border-box;
+    white-space: nowrap;
+    width: 100%;
     display: flex;
     gap: 8px;
     padding: 8px 18px;
     border-radius: 14px;
     background-color: rgb(0 0 0 / 0.48);
+    transition: all 0.18s ease;
     cursor: pointer;
 }
 
+.Placeholder-d-btn {
+    box-sizing: border-box;
+    white-space: nowrap;
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 14px;
+    background-color: rgb(255 149 149 / 0.48);
+    font-weight: 600;
+    transition: all 0.18s ease;
+    cursor: pointer;
+}
+
+.Placeholder-d-btn:hover {
+    animation: ohcrap 0.28s infinite;
+    color: #ffd8d8;
+    background-color: rgb(255 113 113 / 0.48);
+    transition: all 0s ease;
+}
+
+@keyframes ohcrap {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
 .Placeholder-btn:hover, .Placeholder-close:hover {
+    transition: all 0s ease;
     background-color: rgb(255 255 255 / 0.28);
 }
 
@@ -305,4 +355,186 @@ body {
 
 .Placeholder-text {
     opacity: 0.4;
+}
+
+.Einstellungen-scroll {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 360px;
+    padding: 18px 18px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.28);
+}
+
+.Einstellungen-header {
+    display: flex;
+    gap: 8px;
+    font-size: 1.1rem;
+}
+
+.Einstellungen-icon-header {
+    width: 48px;
+}
+
+.Einstellungen-links {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#Nutzersprache, #Nutzerzeitzone {
+    font-weight: 600;
+}
+
+.Einstellungen-linie {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    width: 100%;
+    height: 2px;
+    border-radius: 8px;
+    background-color: rgb(255 255 255 / 0.45);
+}
+
+.Window-outline.Open , .Window-content.Open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.Window-outline {
+    position: fixed;
+    box-sizing: border-box;
+    opacity: 0;
+    padding: 2px 18px;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    background-color: #34344a;
+    color: #ffffff;
+    pointer-events: none;
+    overflow: hidden;
+    width: 600px;
+    min-height: 40px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    cursor: default;
+}
+
+.Window-icon {
+    width: 38px;
+}
+
+.Window-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Window-title {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    gap: 8px;
+}
+
+.Window-title-bold {
+    font-weight: 400;
+}
+
+.Window-button {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.Window-hidden {
+    width: 14px;
+    height: 14px;
+    border-radius: 14px;
+    background-color: #9cff9a;
+    cursor: pointer;
+}
+
+.Window-fullscreen {
+    width: 14px;
+    height: 14px;
+    border-radius: 14px;
+    background-color: #ffd89a;
+    cursor: pointer;
+}
+
+.Window-schließen {
+    width: 14px;
+    height: 14px;
+    border-radius: 14px;
+    background-color: #ff9a9a;
+    cursor: pointer;
+}
+
+.Window-content {
+    position: fixed;
+    padding: 8px;
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    backdrop-filter: blur(18px);
+    background-color: rgb(42 42 58 / 0.7);
+    width: 600px;
+    height: 400px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.Window-resize-handle {
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    width: 16px;
+    height: 16px;
+    cursor: nwse-resize;
+    opacity: 0.65;
+    background: linear-gradient(135deg, transparent 0 42%, rgb(255 255 255 / 0.6) 43% 50%, transparent 51% 62%, rgb(255 255 255 / 0.6) 63% 70%, transparent 71%);
+}
+
+.Window-content.maximized .Window-resize-handle {
+    display: none;
+}
+
+.Window-outline.maximized {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: auto !important;
+    border-radius: 0;
+    min-width: unset;
+    min-height: unset;
+}
+
+.Window-content.maximized {
+    top: 44px !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: calc(100vh - 44px) !important;
+    border-radius: 0;
+    min-width: unset;
+    min-height: unset;
+}
+
+.Window-outline.minimized,
+.Window-content.minimized {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: scale(0.9);
+}
+
+.Window-button div:hover {
+    filter: brightness(0.8);
+}
+
+.Window-header {
+    user-select: none;
 }
