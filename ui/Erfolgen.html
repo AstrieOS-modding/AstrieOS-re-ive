@@ -1,22 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="test-ui.css">
-    <link rel="stylesheet" href="/Res/Font/font.css">
-</head>
-<body>
+<template id="Erfolgen-ui">
     <div class="Erfolgen-placeholder" id="something-placeholder">
         <div class="Erfolgen-content">
             <div class="Erfolgen-header">
-                <h2>Erfolgen! ᕙ( •̀ ᗜ •́ )ᕗ</h2>
+                <h2>Fortschritten! ᕙ( •̀ ᗜ •́ )ᕗ</h2>
             </div>
             <div class="Erfolgen-content-display">
                 <div class="Haupterfolgen-display">
                     <p class="Erfolgen-p-header">Ihre tracking!</p>
                     <div class="Prozent-bar"><span class="Prozent-bold" id="Erfolgen-tracken">0%</span></div>
-                    <p class="Prozent-tipps">Mehr als <span id="Erfolgen-nummer">0</span> vom 8 zum erreichbar du schaffst das!</p>
+                    <p class="Prozent-tipps">Mehr als <span id="Erfolgen-nummer">0</span> vom 10 zum erreichbar du schaffst das!</p>
                     <br>
                     <p class="Erfolgen-p-header">Dein Info!</p>
                     <div class="info-display-top">
@@ -40,37 +32,45 @@
                     <div class="Folgen-display-liste">
                         <p class="Folgen-p-header">Placeholder lol</p>
                         <div class="Folgen-display-grid">
-                            <div class="Folgen-liste-box">
+                            <div class="Folgen-liste-box" data-achievement="first_visit">
                                 <p class="Folgen-liste-header">Erste fehler</p>
                                 <p>Besuche AstrieOS zum ersten Mal</p>
                             </div>
-                            <div class="Folgen-liste-box">
+                            <div class="Folgen-liste-box" data-achievement="return_visit">
                                 <p class="Folgen-liste-header">Du bist zurück</p>
                                 <p>zu spät du bist hier... für immer!</p>
                             </div>
-                            <div class="Folgen-liste-box">
+                            <div class="Folgen-liste-box" data-achievement="afk">
                                 <p class="Folgen-liste-header">Away from keyboard</p>
                                 <p>Hey! woher gist du?</p>
                             </div>
-                            <div class="Folgen-liste-box">
+                            <div class="Folgen-liste-box" data-achievement="clicker">
                                 <p class="Folgen-liste-header">Klicker master</p>
                                 <p>wow ein cookie clicker spieler!</p>
                             </div>
-                            <div class="Folgen-liste-box">
+                            <div class="Folgen-liste-box" data-achievement="first_day">
                                 <p class="Folgen-liste-header">Erste tag verschwinden</p>
                                 <p>Magst wirklich diese joke destro?????</p>
                             </div>
-                            <div class="Folgen-liste-box">
+                            <div class="Folgen-liste-box" data-achievement="mod_collector">
                                 <p class="Folgen-liste-header">Ich brauche... mehr mods....</p>
                                 <p>Wie viel mods hast du herunterladen????</p>
                             </div>
-                            <div class="Folgen-liste-box">
+                            <div class="Folgen-liste-box" data-achievement="october">
                                 <p class="Folgen-liste-header">Sehr spooky.... BOO!</p>
                                 <p>Heute ist Oktober, wie könnten bedeute sein... </p>
                             </div>
-                            <div class="Folgen-liste-box">
+                            <div class="Folgen-liste-box" data-achievement="error">
                                 <p class="Folgen-liste-header">oops...</p>
                                 <p>etwas sind wirklich schiefgegangen.......</p>
+                            </div>
+                            <div class="Folgen-liste-box" data-achievement="controller_gerate">
+                                <p class="Folgen-liste-header">Extra geräten</p>
+                                <p>wow du bist sehr cool mit dein inputs!</p>
+                            </div>
+                            <div class="Folgen-liste-box" data-achievement="music_jammer">
+                                <p class="Folgen-liste-header">Musik fans</p>
+                                <p>-. . ...- . .-. / --. --- -. -. .- / --. .. ...- . / -.-- --- ..- / ..- .--.</p>
                             </div>
                         </div>
                     </div>
@@ -78,5 +78,4 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+</template>

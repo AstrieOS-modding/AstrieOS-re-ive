@@ -2,6 +2,36 @@ let DateinTemplate = null;
 let windowTemplateReady = false;
 let dateinStylesLoaded = false;
 
+let ErfolgenTemplate = null
+let erfolgenStylesLoaded = false
+
+function updateErfolgenUI(status) {
+    const root = document.querySelector('.Window-content[data-window-id="erfolgen"]');
+    if (!root) return;
+
+    const setText = (selector, value) => {
+        const element = root.querySelector(selector);
+        if (element) element.textContent = value;
+    };
+    const percentage = Math.round((status.unlockedCount / 8) * 100);
+    setText('#Erfolgen-tracken', `${percentage}%`);
+    setText('#Erfolgen-nummer', status.unlockedCount);
+    setText('#user-runtime', formatUserDuration(status.activeMilliseconds));
+    setText('#user-session', formatUserDuration(status.longestSessionMilliseconds));
+    setText('#user-clicks', status.clicks.toLocaleString('de-DE'));
+    const trackedTime = status.activeMilliseconds + status.afkMilliseconds;
+    setText('#user-afk', trackedTime ? Math.round((status.afkMilliseconds / trackedTime) * 100) : 0);
+
+    root.querySelectorAll('[data-achievement]').forEach((card) => {
+        const unlocked = Boolean(status.achievements[card.dataset.achievement]);
+        card.classList.toggle('is-unlocked', unlocked);
+        card.classList.toggle('is-locked', !unlocked);
+        card.setAttribute('aria-label', unlocked ? 'Erfolg freigeschaltet' : 'Erfolg gesperrt');
+    });
+}
+
+UserStatus.subscribe(updateErfolgenUI);
+
 fetch('/ui/Nutzercenter.html')
   .then(res => res.text())
   .then(html => {
@@ -37,6 +67,15 @@ fetch('/ui/Datein.html')
         DateinTemplate = template.content;
     });
 
+fetch('/ui/Erfolgen.html')
+    .then(res => res.text())
+    .then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const template = doc.querySelector('#Erfolgen-ui');
+        if (!template) throw new Error('Datei-Template wurde nicht gefunden.');
+        ErfolgenTemplate = template.content;
+    });
+
 function openDateinWindow() {
     if (!DateinTemplate || !windowTemplateReady) return;
 
@@ -65,4 +104,35 @@ function openDateinWindow() {
         icon: '/Res/Bild/Icon/Topbar/folder_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg',
         content: content
     });
+}
+
+function openwindow_trophy() {
+    if (!ErfolgenTemplate || !windowTemplateReady) return;
+
+    if (WindowManager.windows['erfolgen']) {
+        const w = WindowManager.windows['erfolgen'];
+        if (w.minimized) {
+            WindowManager.restoreWindow('erfolgen');
+        } else {
+            WindowManager.focusWindow('erfolgen');
+        }
+        return;
+    }
+
+    const content = ErfolgenTemplate.cloneNode(true);
+    if (!erfolgenStylesLoaded) {
+        const cssLink = document.createElement('link');
+        cssLink.rel = 'stylesheet';
+        cssLink.href = '/ui/Ui_css/Erfolgen.css';
+        document.head.appendChild(cssLink);
+        erfolgenStylesLoaded = true;
+    }
+
+    WindowManager.createWindow({
+        id: 'erfolgen',
+        title: 'Fortschritten!',
+        icon: '/Res/Bild/Icon/Topbar/trophy_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg',
+        content: content
+    });
+    updateErfolgenUI(UserStatus.snapshot());
 }

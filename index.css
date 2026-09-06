@@ -4,11 +4,57 @@ body {
     color: #ffffff;
     -webkit-tap-highlight-color: transparent;
     font-family: Google-sans;
+    font-size: 1rem;
     cursor: default;
 }
 
+.Achievement-notifications {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 10000001;
+    display: grid;
+    gap: 10px;
+    width: min(340px, calc(100vw - 36px));
+    pointer-events: none;
+}
+
+.Achievement-notification {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid rgb(156 255 154 / 0.65);
+    border-radius: 14px;
+    background: rgb(30 30 43 / 0.92);
+    box-shadow: 0 12px 30px rgb(0 0 0 / 0.3);
+    backdrop-filter: blur(16px);
+    animation: Achievement-in 0.18s ease-out;
+}
+
+.Achievement-notification img { width: 32px; height: 32px; }
+.Achievement-notification strong, .Achievement-notification span { display: block; }
+.Achievement-notification span { margin-top: 3px; opacity: 0.72; font-size: 0.9rem; }
+.Achievement-notification.is-leaving { animation: Achievement-out 0.22s ease-in forwards; }
+
+@keyframes Achievement-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes Achievement-out { to { opacity: 0; transform: translateX(24px); } }
+
 ::selection {
     background: transparent;
+}
+
+.Early-access {
+    opacity: 0.1;
+    position: fixed;
+    bottom: 18px;
+    left: 18px;
+    line-height: 0;
+}
+
+.Early-access-header {
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 .Ladenoverlay {
@@ -125,6 +171,7 @@ body {
 
 .Nutzerui {
     display: flex;
+    align-items: center;
     gap: 8px;
     width: 240px;
     border-radius: 14px;
@@ -142,6 +189,7 @@ body {
 
 .Topbar-btn {
     display: flex;
+    align-items: center;
     gap: 8px;
     padding: 0 14px;
     border-radius: 14px;
@@ -289,6 +337,7 @@ body {
     white-space: nowrap;
     width: 100%;
     display: flex;
+    align-items: center;
     gap: 8px;
     padding: 8px 18px;
     border-radius: 14px;
@@ -418,7 +467,7 @@ body {
     overflow: hidden;
     width: 600px;
     min-height: 40px;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.2s ease;
     cursor: default;
 }
 
@@ -484,7 +533,7 @@ body {
     height: 400px;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.2s ease;
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -528,7 +577,6 @@ body {
 .Window-content.minimized {
     opacity: 0 !important;
     pointer-events: none !important;
-    transform: scale(0.9);
 }
 
 .Window-button div:hover {

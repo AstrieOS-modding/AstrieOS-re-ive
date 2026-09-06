@@ -7,25 +7,25 @@
                 <p class="Placeholder-disclaimer">(Nicht offiziell design und beißspiel btw)</p>
             </div>
             <div class="Placeholder-dashboard">
-                <div class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/Topbar/settings_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p class="Placeholder-text-bold">Allgemein</p>
+                <div onclick="document.getElementById('Settings_main').scrollIntoView({ behavior:'smooth' })" class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/Topbar/settings_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p class="Placeholder-text-bold">Allgemein</p>
                     <p class="Placeholder-text">Alles sind wichtig genau hier!</p>
                 </div>
-                <div class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/monitor_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p class="Placeholder-text-bold">Display</p>
+                <div onclick="document.getElementById('Settings_display').scrollIntoView({ behavior:'smooth' })" class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/monitor_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p class="Placeholder-text-bold">Display</p>
                     <p class="Placeholder-text">Material you, Grafik oder besonderes sind hier!</p>
                 </div>
-                <div class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/volume_up_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p class="Placeholder-text-bold">Audio</p>
+                <div onclick="document.getElementById('Settings_audio').scrollIntoView({ behavior:'smooth' })" class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/volume_up_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p class="Placeholder-text-bold">Audio</p>
                     <p class="Placeholder-text">zu-laut oder zu-leise? und etwas coole? konfig hier!</p>
                 </div>
-                <div class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/bug_report_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p class="Placeholder-text-bold">Debug</p>
+                <div onclick="document.getElementById('Settings_debug').scrollIntoView({ behavior:'smooth' })" class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/bug_report_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p class="Placeholder-text-bold">Debug</p>
                     <p class="Placeholder-text">Hifle das Projekt verbessert? oder debugging?</p>
                 </div>
             </div>
             <div class="Einstellungen-scroll">
-                <div class="Einstellungen-header"><img class="Einstellungen-icon-header" src="/Res/Bild/Icon/Topbar/settings_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><h2>Allegmein</h2></div>
+                <div id="Settings_main" class="Einstellungen-header"><img class="Einstellungen-icon-header" src="/Res/Bild/Icon/Topbar/settings_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><h2>Allegmein</h2></div>
                 <p>Schnellzugriff</p>
                 <div class="Einstellungen-links">
-                    <div class="Placeholder-btn"><p>Repo besuchen!</p></div>
-                    <div class="Placeholder-btn"><p>Stabil besuchen!</p></div>
+                    <div onclick="window.open('https://github.com/AstrieOS-modding/AstrieOS-re-ive', '_blank')" class="Placeholder-btn"><p>Repo besuchen!</p></div>
+                    <div onclick="window.open('https://astrieos.netlify.app/', '_blank')" class="Placeholder-btn"><p>Stabil besuchen!</p></div>
                     <div class="Placeholder-btn"><p>Version überprüfen!</p></div>
                 </div>
                 <p>Region</p>
@@ -34,7 +34,7 @@
                     <div class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/Topbar/alarm_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Uhr-format: <span id="Nutzerzeitzone">24 Stunden</span></p></div>
                 </div>
                 <div class="Einstellungen-linie"></div>
-                <div class="Einstellungen-header"><img class="Einstellungen-icon-header" src="/Res/Bild/Icon/EInstellungen/monitor_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><h2>Display</h2></div>
+                <div id="Settings_display" class="Einstellungen-header"><img class="Einstellungen-icon-header" src="/Res/Bild/Icon/EInstellungen/monitor_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><h2>Display</h2></div>
                 <p>Grafik</p>
                 <div class="Einstellungen-links">
                     <div class="Placeholder-btn"><p>Fps anzeigen</p></div>
@@ -58,7 +58,7 @@
                     <div class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/monitor_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Desktop editor!</p></div>
                 </div>
                 <div class="Einstellungen-linie"></div>
-                <div class="Einstellungen-header"><img class="Einstellungen-icon-header" src="/Res/Bild/Icon/EInstellungen/volume_up_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><h2>Audio</h2></div>
+                <div id="Settings_audio" class="Einstellungen-header"><img class="Einstellungen-icon-header" src="/Res/Bild/Icon/EInstellungen/volume_up_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><h2>Audio</h2></div>
                 <p>Lautstarke</p>
                 <div class="Einstellungen-links">
                     <div class="Placeholder-btn"><p>Volume: <span id="Volume">24%</span></p></div>
@@ -88,7 +88,7 @@
                     <div class="Placeholder-btn"><p>Untertitel erlaubnis: <span id="Modding-subtitle">an</span></p></div>
                 </div>
                 <div class="Einstellungen-linie"></div>
-                <div class="Einstellungen-header"><img class="Einstellungen-icon-header" src="/Res/Bild/Icon/EInstellungen/bug_report_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><h2>Debug</h2></div>
+                <div id="Settings_debug" class="Einstellungen-header"><img class="Einstellungen-icon-header" src="/Res/Bild/Icon/EInstellungen/bug_report_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><h2>Debug</h2></div>
                 <p>Nutzbar tools</p>
                 <div class="Einstellungen-links">
                     <div class="Placeholder-btn"><p>Console log</p></div>
