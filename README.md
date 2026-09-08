@@ -1,4 +1,5 @@
-<img width="2400" height="758" alt="Banner-lol" src="https://github.com/user-attachments/assets/382e416f-44de-455e-8e87-494636e46386" />
+<img width="2395" height="686" alt="Banner-2" src="https://github.com/user-attachments/assets/7bcb09a7-21a4-416a-8c9a-6c9d50df9836" />
+
 
 ## AstrieOS re-ive (early access)
 hahaha joke Betriebssystem gose... brrrrrrrrr!!!!!!!
