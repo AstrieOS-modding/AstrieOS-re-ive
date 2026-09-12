@@ -50,6 +50,8 @@ body {
     bottom: 18px;
     left: 18px;
     line-height: 0;
+    z-index: 8000000;
+    pointer-events: none;
 }
 
 .Early-access-header {
@@ -74,15 +76,19 @@ body {
     pointer-events: all;
 }
 
+.Ladenlogo {
+    width: 512px;
+}
+
 .Ladenheader {
     font-size: 2rem;
     font-weight: 400;
     line-height: 0.4;
-    animation: Coolheader 0.7s ease;
+    animation: Coolheader 0.7s;
 }
 
 @keyframes Coolheader {
-    0% { opacity: 0; color: #e0a0ff; transform: translateY(8px); }
+    0% { opacity: 0; color: #e0a0ff; transform: translateY(14px); }
     100% { opacity: 1; color: #ffffff; transform: translateY(0px); }
 }
 
@@ -151,7 +157,7 @@ body {
     backdrop-filter: blur(18px);
     border-radius: 18px;
     background-color: rgb(0 0 0 / 0.18);
-    transition: all 0.28s ease;
+    transition: all 0.18s ease;
 }
 
 .Topbar-content:hover {
@@ -176,10 +182,12 @@ body {
     width: 240px;
     border-radius: 14px;
     font-size: 1rem;
+    transition: all 0.14s ease;
     cursor: pointer;
 }
 
 .Nutzerui:hover, .Topbar-btn:hover {
+    transition: all 0s ease;
     background-color: rgb(255 255 255 / 0.18);
 }
 
@@ -193,6 +201,7 @@ body {
     gap: 8px;
     padding: 0 14px;
     border-radius: 14px;
+    transition: all 0.14s ease;
     cursor: pointer;
 }
 
@@ -585,4 +594,116 @@ body {
 
 .Window-header {
     user-select: none;
+}
+
+.Benachrichtigung-content.Open {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0%);
+}
+
+.Benachrichtigung-content:hover {
+    background-color: rgb(0 0 0 / 0.38);
+}
+
+.Benachrichtigung-content {
+    opacity: 0;
+    transform: translateX(-100%);
+    pointer-events: none;
+    transition: all 0.18s ease;
+    position: fixed;
+    left: 18px;
+    top: 98px;
+    width: 34rem;
+    padding: 8px 18px;
+    border-radius: 14px;
+    backdrop-filter: blur(18px);
+    background-color: rgb(0 0 0 / 0.18);
+    color: #ffffff;
+}
+
+.Benachrichtigung-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.Benachricht-nummer {
+    font-weight: 600;
+}
+
+.Benachricht-scroll {
+    overflow: scroll;
+    height: 280px;
+}
+
+.Benachricht-clear {
+    padding: 4px 18px;
+    border-radius: 14px;
+    font-weight: 500;
+    transition: all 0.18s ease;
+    cursor: pointer;
+}
+
+.Benachricht-clear:hover {
+    transition: all 0s ease;
+    background-color: rgb(255 255 255 / 0.28);
+}
+
+.Benachricht-leer {
+    opacity: 0.5;
+    font-weight: 600;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.Benachricht-linie {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    width: 100%;
+    height: 2px;
+    background-color: #ffffff;
+}
+
+.Benachricht-btn {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 18px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.14);
+    transition: all 0.18s ease;
+}
+
+.Benachricht-btn:hover {
+    transition: all 0s ease;
+    background-color: rgb(0 0 0 / 0.28);
+}
+
+.Benachricht-img {
+    width: 34px;
+}
+
+.Btn-header {
+    font-weight: 600;
+}
+
+.Benachricht-clear-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    width: 48px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.Benachricht-clear-btn:hover {
+    transition: all 0s ease;
+    background-color: rgb(255 255 255 / 0.28);
 }

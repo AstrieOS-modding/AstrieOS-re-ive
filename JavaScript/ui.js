@@ -1,9 +1,10 @@
 let DateinTemplate = null;
 let windowTemplateReady = false;
 let dateinStylesLoaded = false;
-
 let ErfolgenTemplate = null
 let erfolgenStylesLoaded = false
+let MusikplayerTemplate = null
+let musicplayerStylesLoaded = false
 
 function updateErfolgenUI(status) {
     const root = document.querySelector('.Window-content[data-window-id="erfolgen"]');
@@ -48,6 +49,14 @@ fetch('/ui/Einstellungen.html')
         document.body.appendChild(template.content.cloneNode(true));
     });
 
+fetch('/ui/Benachrichtigung.html')
+    .then(res => res.text())
+    .then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const template = doc.querySelector('#Benachrichtigung-ui');
+        document.body.appendChild(template.content.cloneNode(true));
+    });
+
 fetch('/ui/overlay/window.html')
     .then(res => res.text())
     .then(html => {
@@ -76,6 +85,15 @@ fetch('/ui/Erfolgen.html')
         ErfolgenTemplate = template.content;
     });
 
+fetch('/ui/Musikplayer.html')
+    .then(res => res.text())
+    .then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const template = doc.querySelector('#Musikplayer-ui');
+        if (!template) throw new Error('Datei-Template wurde nicht gefunden.');
+        MusikplayerTemplate = template.content;
+    });
+
 function openDateinWindow() {
     if (!DateinTemplate || !windowTemplateReady) return;
 
@@ -100,7 +118,7 @@ function openDateinWindow() {
 
     WindowManager.createWindow({
         id: 'datein',
-        title: 'Datein',
+        title: 'Datein! ^⎚-⎚^',
         icon: '/Res/Bild/Icon/Topbar/folder_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg',
         content: content
     });
@@ -130,9 +148,39 @@ function openwindow_trophy() {
 
     WindowManager.createWindow({
         id: 'erfolgen',
-        title: 'Fortschritten!',
+        title: 'Fortschritten! ᕙ(  •̀ ᗜ •́  )ᕗ',
         icon: '/Res/Bild/Icon/Topbar/trophy_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg',
         content: content
     });
     updateErfolgenUI(UserStatus.snapshot());
+}
+
+function openMusikplayerWindow() {
+    if (!MusikplayerTemplate || !windowTemplateReady) return;
+
+    if (WindowManager.windows['musikplayer']) {
+        const w = WindowManager.windows['musikplayer'];
+        if (w.minimized) {
+            WindowManager.restoreWindow('musikplayer');
+        } else {
+            WindowManager.focusWindow('musikplayer');
+        }
+        return;
+    }
+
+    const content = MusikplayerTemplate.cloneNode(true);
+    if (!musicplayerStylesLoaded) {
+        const cssLink = document.createElement('link');
+        cssLink.rel = 'stylesheet';
+        cssLink.href = '/ui/Ui_css/Musikplayer.css';
+        document.head.appendChild(cssLink);
+        musicplayerStylesLoaded = true;
+    }
+
+    WindowManager.createWindow({
+        id: 'musikplayer',
+        title: 'Musikplayer! 〜⁠(⁠꒪⁠꒳⁠꒪⁠)⁠〜',
+        icon: '/Res/Bild/Icon/Topbar/music_note_2_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg',
+        content: content
+    });
 }

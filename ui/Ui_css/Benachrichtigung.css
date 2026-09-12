@@ -1,0 +1,8 @@
+.Benachricht-header {
+    display: flex;
+    gap: 8px;
+}
+
+.Benachricht-nummer {
+    font-weight: 600;
+}

@@ -12,6 +12,10 @@
     color: #ffffff;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 .Erfolgen-content {
     margin: auto;
     width: 90%;
@@ -117,8 +121,10 @@
 .Folgen-display-liste {
     margin-top: 8px;
     margin-bottom: 8px;
+    height: 680px;
+    overflow-y: scroll;
+    overflow-x: hidden;
     box-sizing: border-box;
-    height: 60vh;
     padding: 8px 18px;
     border-radius: 14px;
     border: solid 2px #ffffff;
@@ -130,7 +136,7 @@
 
 .Folgen-display-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 8px;
 }
 

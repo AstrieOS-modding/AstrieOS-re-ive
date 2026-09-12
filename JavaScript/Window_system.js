@@ -14,7 +14,7 @@ const WindowManager = {
         this._installGlobalListeners();
     },
 
-    createWindow({ id, title = 'Fenster', icon = '', content, width = 600, height = 400 } = {}) {
+    createWindow({ id, title = 'Fenster', icon = '', content, width = 1280, height = 720 } = {}) {
         if (!id) throw new Error('Für ein Fenster wird eine eindeutige ID benötigt.');
         if (!this.template) {
             console.warn('WindowManager ist noch nicht initialisiert.');
