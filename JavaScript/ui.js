@@ -47,6 +47,7 @@ fetch('/ui/Einstellungen.html')
         const doc = new DOMParser().parseFromString(html, 'text/html');
         const template = doc.querySelector('#einstellungen-placeholder');
         document.body.appendChild(template.content.cloneNode(true));
+        document.dispatchEvent(new Event('settings-template-ready'));
     });
 
 fetch('/ui/Benachrichtigung.html')
@@ -55,6 +56,7 @@ fetch('/ui/Benachrichtigung.html')
         const doc = new DOMParser().parseFromString(html, 'text/html');
         const template = doc.querySelector('#Benachrichtigung-ui');
         document.body.appendChild(template.content.cloneNode(true));
+        document.dispatchEvent(new Event('notifications-template-ready'));
     });
 
 fetch('/ui/overlay/window.html')

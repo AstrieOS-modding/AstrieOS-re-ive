@@ -26,7 +26,20 @@
                 <div class="Einstellungen-links">
                     <div onclick="window.open('https://github.com/AstrieOS-modding/AstrieOS-re-ive', '_blank')" class="Placeholder-btn"><p>Repo besuchen!</p></div>
                     <div onclick="window.open('https://astrieos.netlify.app/', '_blank')" class="Placeholder-btn"><p>Stabil besuchen!</p></div>
-                    <div class="Placeholder-btn"><p>Version überprüfen!</p></div>
+                    <button class="Placeholder-btn Settings-version-check" type="button" data-version-check>
+                        <img class="Placeholder-icon" src="/Res/Bild/Icon/Benachrichtige/update_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" alt="">
+                        <span><strong>Version überprüfen</strong><small data-version-status>Prüft GitHub-Releases auf Wunsch.</small></span>
+                    </button>
+                </div>
+                <div class="Settings-update-card" data-update-card hidden>
+                    <div>
+                        <strong data-update-title>Update verfügbar</strong>
+                        <p data-update-detail></p>
+                    </div>
+                    <div class="Settings-update-actions">
+                        <button class="Settings-update-button" type="button" data-update-download>Herunterladen</button>
+                        <button class="Settings-later-button" type="button" data-update-later>Aktuelle Version behalten</button>
+                    </div>
                 </div>
                 <p>Region</p>
                 <div class="Einstellungen-links">
@@ -94,6 +107,11 @@
                     <div class="Placeholder-btn"><p>Console log</p></div>
                     <div class="Placeholder-btn"><p>Debug mode</p></div>
                 </div>
+                <div class="Einstellungen-links">
+                    <button class="Placeholder-btn" type="button" data-debug-version-check><p>Version checker</p></button>
+                    <button class="Placeholder-btn" type="button" data-debug-fiction-update><p>Fiction update herunterladen!</p></button>
+                </div>
+                <p class="Settings-debug-note" data-debug-update-status>Diese Debug-Buttons ändern keine installierte Version.</p>
                 <p>Gefährlich zone</p>
                 <div class="Einstellungen-links">
                     <div class="Placeholder-d-btn"><p>ALLE DATEN LÖSCHEN</p></div>

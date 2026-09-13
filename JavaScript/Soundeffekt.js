@@ -3,7 +3,10 @@ const Sound = {
     sounds: {},
 
     init() {
-        const names = ['cursor-tap', 'default-hover', 'default-select', 'menu-close', 'menu-open'];
+        const names = [
+            'cursor-tap', 'default-hover', 'default-select', 'menu-close', 'menu-open',
+            'notification-default', 'notification-done', 'notification-error', 'notification-cancel'
+        ];
         const basePath = '/Res/Audio/Soundeffekt/System/';
 
         names.forEach(name => {

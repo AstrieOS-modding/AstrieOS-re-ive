@@ -2,25 +2,17 @@
     <div class="Benachrichtigung-placeholder">
         <div class="Benachrichtigung-content">
             <div class="Benachrichtigung-header">
-                <p>Benachrichtigen <span class="Benachricht-nummer">0</span></p>
-                <div class="Benachricht-clear"><p>alle löschen</p></div>
+                <p>Benachrichtigungen <span class="Benachricht-nummer" data-notification-count>0</span></p>
+                <button class="Benachricht-clear" type="button" data-notification-clear>alle löschen</button>
             </div>
             <div class="Benachricht-linie"></div>
-            <div class="Benachricht-scroll">
-                <div class="Benachricht-btn">
-                    <img class="Benachricht-img" src="/Res/Bild/Icon/Benachrichtige/download_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
-                    <div class="Benachricht-text">
-                        <p class="Btn-header">Test</p>
-                        <p>Wie sind cooler als dir lol</p>
-                    </div>
-                    <div class="Benachricht-clear-btn"><img class="Benachricht-img" src="/Res/Bild/Icon/Nutzercenter/close_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"></div>
-                </div>
+            <div class="Benachricht-scroll" data-notification-list aria-live="polite">
                 <div class="Benachricht-leer"><p>Ganz leise sein...(╭ರ_•́)</p></div>
             </div>
 
             <div class="Benachrichtigung-header">
-                <p>Lauftende vorgangen <span class="Benachricht-nummer">0</span></p>
-                <div class="Benachricht-clear"><p>alle abbrechen</p></div>
+                <p>Laufende Vorgänge <span class="Benachricht-nummer">0</span></p>
+                <span class="Benachricht-clear is-disabled">nichts aktiv</span>
             </div>
             <div class="Benachricht-linie"></div>
             <div class="Benachricht-scroll">
