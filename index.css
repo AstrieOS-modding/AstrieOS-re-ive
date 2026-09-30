@@ -208,6 +208,7 @@ body {
 .Taskbar-ui {
     position: fixed;
     display: flex;
+    gap: 8px;
     justify-content: center;
     align-content: center;
     bottom: 14px;
@@ -252,7 +253,6 @@ body {
 
 .Taskbar-content:hover {
     background-color: rgb(0 0 0 / 0.38);
-    margin-bottom: 8px;
 }
 
 .Taskbar-app {

@@ -5,7 +5,7 @@ const Sound = {
     init() {
         const names = [
             'cursor-tap', 'default-hover', 'default-select', 'menu-close', 'menu-open',
-            'notification-default', 'notification-done', 'notification-error', 'notification-cancel'
+            'notification-default', 'notification-done', 'notification-error', 'notification-cancel' ,'.tada-meme'
         ];
         const basePath = '/Res/Audio/Soundeffekt/System/';
 
@@ -15,6 +15,13 @@ const Sound = {
             audio.src = basePath + name + '.wav';
             this.sounds[name] = audio;
         });
+
+        names.forEach(name => {
+            const audio = new Audio();
+            audio.preload = 'auto';
+            audio.src = basePath + name + '.mp3';
+            this.sounds[name] = audio;
+        })
     },
 
     play(name) {

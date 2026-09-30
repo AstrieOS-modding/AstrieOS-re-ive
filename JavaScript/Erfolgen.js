@@ -119,7 +119,7 @@ const UserStatus = {
         notification.className = 'Achievement-notification';
         notification.innerHTML = `<img src="/Res/Bild/Icon/Topbar/trophy_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" alt=""><div><strong>${heading}</strong><span>${description}</span></div>`;
         region.append(notification);
-        if (typeof Sound !== 'undefined') Sound.play('menu-open');
+        if (typeof Sound !== 'undefined') Sound.play('tada-meme');
         window.setTimeout(() => {
             notification.classList.add('is-leaving');
             window.setTimeout(() => notification.remove(), 220);
