@@ -14,6 +14,13 @@ function placeholder_setting() {
     }
 }
 
+function User_Wallpapier() {
+    const el = document.querySelector('.Einstellungen-hintergrund-display')
+    if (el) {
+        el.classList.contains('Open') ? Sound.play('menu-close') : Sound.play('menu-open');
+        el.classList.toggle('Open')
+    }
+}
 
 function placeholder_notifield() {
     const el = document.querySelector('.Benachrichtigung-content')
