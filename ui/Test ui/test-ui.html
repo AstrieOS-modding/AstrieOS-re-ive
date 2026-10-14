@@ -7,17 +7,40 @@
     <link rel="stylesheet" href="/Res/Font/font.css">
 </head>
 <body>
-    <div class="Musikplayer-placeholder" id="musicplayer-placeholder">
-        <div class="Musikplayer-content">
-            <div class="Musikplayer-topbar">
-                <div class="Musikplayer-links-topbar">
-                    <div class="Musikplayer-title"><p>Musikplayer! 〜⁠(⁠꒪⁠꒳⁠꒪⁠)⁠〜</p></div>
-                    <div class="Musikplayer-btn">Startseite</div>
-                    <div class="Musikplayer-btn">Suchen</div>
-                    <div class="Musikplayer-btn">Bibilothik</div>
-                </div>
-            </div>
+    <div class="wallhaven-container">
+        <div class="wallhaven-search">
+            <input type="text" class="wallhaven-input" placeholder="Suche nach Wallpapers...">
+            <button class="wallhaven-button" onclick="window.WallhavenManager._searchWallhaven()">
+                <img src="/Res/Bild/Icon/Topbar/search_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" width="24" height="24">
+                Suche
+            </button>
         </div>
+        <div class="wallhaven-filters">
+            <select class="wallhaven-select" id="wallhaven-category">
+                <option value="">Alle Kategorien</option>
+                <option value="general">General</option>
+                <option value="anime">Anime</option>
+                <option value="people">People</option>
+            </select>
+            <select class="wallhaven-select" id="wallhaven-purity">
+                <option value="">Alle Reinheitsstufen</option>
+                <option value="sfw">SFW</option>
+                <option value="sketchy">Sketchy</option>
+                <option value="nsfw">NSFW</option>
+            </select>
+            <select class="wallhaven-select" id="wallhaven-resolution">
+                <option value="">Alle Auflösungen</option>
+                <option value="1920x1080">1920x1080</option>
+                <option value="2560x1440">2560x1440</option>
+                <option value="3840x2160">3840x2160</option>
+            </select>
+        </div>
+        <div class="wallhaven-results" id="wallhaven-results">
+            <p class="wallhaven-empty">Suche nach Wallpapers, um Ergebnisse zu sehen</p>
+        </div>
+        <div class="wallhaven-pagination" id="wallhaven-pagination"></div>
     </div>
+    <script src="/JavaScript/Einstellungen.js"></script>
+    <script src="/JavaScript/ui.js"></script>
 </body>
 </html>

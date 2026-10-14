@@ -19,6 +19,11 @@ function User_Wallpapier() {
     if (el) {
         el.classList.contains('Open') ? Sound.play('menu-close') : Sound.play('menu-open');
         el.classList.toggle('Open')
+        
+        // Stelle sicher, dass Event-Listener gebunden sind
+        if (el.classList.contains('Open') && typeof EinstellungenHintergrund !== 'undefined') {
+            EinstellungenHintergrund.init();
+        }
     }
 }
 

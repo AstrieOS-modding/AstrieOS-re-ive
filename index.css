@@ -138,6 +138,42 @@ body {
     will-change: transform;
 }
 
+/* Live hintergrund lol */
+.Desktop-video-wallpaper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+    will-change: transform;
+    transform-origin: center;
+    z-index: -1;
+}
+
+/* Animierte Bilder - optimale Darstellung */
+.Desktop-wallpaper[src*=".gif"],
+.Desktop-wallpaper[src*=".apng"],
+.Desktop-wallpaper[src^="data:image/gif"],
+.Desktop-wallpaper[src^="data:image/apng"] {
+    object-fit: contain !important;
+}
+
+/* Video-Hintergrund - volle Abdeckung */
+.Desktop-video-wallpaper[style*="display: block"] {
+    display: block !important;
+}
+
+/* Performance-Optimierung für animierte Inhalte */
+.Desktop-hintergrund video,
+.Desktop-hintergrund img[src*=".gif"],
+.Desktop-hintergrund img[src*=".apng"] {
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
 .Topbar-ui {
     position: fixed;
     display: flex;
@@ -877,3 +913,20 @@ body {
     transition: all 0s ease;
     background-color: rgb(255 255 255 / 0.28);
 }
+
+/* Hintergrund Standard Button */
+.Hintergrund-standard {
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.45);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.Hintergrund-standard:hover {
+    transition: all 0s ease;
+    background-color: rgb(255 255 255 / 0.28);
+}
+

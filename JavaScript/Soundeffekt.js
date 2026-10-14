@@ -5,7 +5,7 @@ const Sound = {
     init() {
         const names = [
             'cursor-tap', 'default-hover', 'default-select', 'menu-close', 'menu-open',
-            'notification-default', 'notification-done', 'notification-error', 'notification-cancel' ,'.tada-meme'
+            'notification-default', 'notification-done', 'notification-error', 'notification-cancel'
         ];
         const basePath = '/Res/Audio/Soundeffekt/System/';
 
@@ -15,13 +15,6 @@ const Sound = {
             audio.src = basePath + name + '.wav';
             this.sounds[name] = audio;
         });
-
-        names.forEach(name => {
-            const audio = new Audio();
-            audio.preload = 'auto';
-            audio.src = basePath + name + '.mp3';
-            this.sounds[name] = audio;
-        })
     },
 
     play(name) {
@@ -45,11 +38,11 @@ const Sound = {
 Sound.init();
 
 document.addEventListener('mouseover', (e) => {
-    const el = e.target.closest('button, .Topbar-btn, .Taskbar-app, .Placeholder-btn, a, .Benachricht-btn, .Benachricht-clear-btn, .Benachricht-clear');
+    const el = e.target.closest('button, .Topbar-btn, .Taskbar-app, .Placeholder-btn, a, .Benachricht-btn, .Benachricht-clear-btn, .Benachricht-clear, .Hintergrund-nutzer-upload, .Hintergrund-nutzer-wallhaven');
     if (el) Sound.play('default-hover');
 });
 
 document.addEventListener('click', (e) => {
-    const el = e.target.closest('button, .Topbar-btn, .Taskbar-app, .Placeholder-btn, a, .Benachricht-clear-btn, .Benachricht-clear');
+    const el = e.target.closest('button, .Topbar-btn, .Taskbar-app, .Placeholder-btn, a, .Benachricht-clear-btn, .Benachricht-clear, .Hintergrund-nutzer-upload, .Hintergrund-nutzer-wallhaven');
     if (el) Sound.play('default-select');
 });

@@ -61,14 +61,16 @@
                 <p>Desktop</p>
                 <div class="Einstellungen-links">
                     <div onclick="User_Wallpapier()" class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght500_GRAD0_opsz24.svg"><p>Deine hintergrund!</p></div>
-                    <div class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/Hintergrund formaten/image_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Hintergrund format: <span id="Wallpapertype">Bilder</span></p></div>
                 </div>
                 <div class="Einstellungen-hintergrund-display">
                     <p class="Hintergrund-header">Ihre Hintergrund!</p>
                     <div class="Hintergrund-leer"><p>Hmmmm.... ganz leer aus.. :/</p></div>
                     <div class="Hintergrund-nutzer-tools">
-                        <div class="Hintergrund-nutzer-upload"><p>Laden dein Hintergrund!</p></div>
-                        <div class="Hintergrund-nutzer-wallhaven"><p>Wallhaven durchsuchen!</p></div>
+                        <div class="Hintergrund-nutzer-upload" onclick="EinstellungenHintergrund.openHintergrundUpload()"><p>Laden dein Hintergrund!</p></div>
+                        <div class="Hintergrund-nutzer-wallhaven" onclick="WallhavenManager.openWallhavenWindow()"><p>Wallhaven durchsuchen!</p></div>
+                    </div>
+                    <div class="Hintergrund-standard" onclick="EinstellungenHintergrund.resetHintergrund()">
+                        <p>Standard-Hintergrund wiederherstellen</p>
                     </div>
                 </div>
                 <div class="Einstellungen-links">
