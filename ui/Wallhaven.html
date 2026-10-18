@@ -2,23 +2,22 @@
     <div class="wallhaven-container">
         <div class="wallhaven-search">
             <input type="text" class="wallhaven-input" placeholder="Suche nach Wallpapers...">
-            <button class="wallhaven-button" onclick="window.WallhavenManager._searchWallhaven()">
+            <button class="wallhaven-button" type="button">
                 <img src="/Res/Bild/Icon/Topbar/search_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" width="24" height="24">
                 Suche
             </button>
         </div>
         <div class="wallhaven-filters">
             <select class="wallhaven-select" id="wallhaven-category">
-                <option value="">Alle Kategorien</option>
-                <option value="general">General</option>
-                <option value="anime">Anime</option>
-                <option value="people">People</option>
+                <option value="111">Alle Kategorien</option>
+                <option value="100">General</option>
+                <option value="010">Anime</option>
+                <option value="001">People</option>
             </select>
             <select class="wallhaven-select" id="wallhaven-purity">
-                <option value="">Alle Reinheitsstufen</option>
-                <option value="sfw">SFW</option>
-                <option value="sketchy">Sketchy</option>
-                <option value="nsfw">NSFW</option>
+                <option value="100" selected>Nur SFW</option>
+                <option value="110">SFW + Sketchy</option>
+                <option value="111">Alle Stufen</option>
             </select>
             <select class="wallhaven-select" id="wallhaven-resolution">
                 <option value="">Alle Auflösungen</option>
@@ -31,5 +30,8 @@
             <p class="wallhaven-empty">Suche nach Wallpapers, um Ergebnisse zu sehen</p>
         </div>
         <div class="wallhaven-pagination" id="wallhaven-pagination"></div>
+        <label class="wallhaven-api-key-label">API-Key (optional, für Sketchy/NSFW)
+            <input class="wallhaven-api-key" type="password" autocomplete="off" placeholder="Wallhaven API-Key">
+        </label>
     </div>
 </template>

@@ -60,10 +60,16 @@ const Nutzerkonto = {
                 button.classList.add('aktiv');
             }
 
-            button.innerHTML = `
-                <img class="Placeholder-pfp-icon" src="${konto.profilbildUrl || '/Res/Bild/Logo/AddText_07-03-07.27.32.png'}" width="64" height="64">
-                <p><span>${konto.username || 'Gast!'}</span></p>
-            `;
+            const avatar = document.createElement('img');
+            avatar.className = 'Placeholder-pfp-icon';
+            avatar.src = konto.profilbildUrl || '/Res/Bild/Logo/AddText_07-03-07.27.32.png';
+            avatar.width = 64;
+            avatar.height = 64;
+            const label = document.createElement('p');
+            const username = document.createElement('span');
+            username.textContent = konto.username || 'Gast!';
+            label.appendChild(username);
+            button.append(avatar, label);
 
             // Event-Listener hinzufügen
             button.addEventListener('click', (e) => {
@@ -80,8 +86,13 @@ const Nutzerkonto = {
     /**
      * Zeigt Dialog zum Erstellen eines neuen Kontos
      */
-    zeigeNeuesKontoDialog() {
-        const username = prompt('Neuen Benutzernamen eingeben:', 'Nutzer' + (Math.floor(Math.random() * 1000)));
+    async zeigeNeuesKontoDialog() {
+        const username = await Popup.prompt('Neuen Benutzernamen eingeben:', {
+            title: 'Konto erstellen',
+            inputLabel: 'Benutzername',
+            value: 'Nutzer' + Math.floor(Math.random() * 1000),
+            confirmLabel: 'Erstellen'
+        });
         
         if (username && username.trim()) {
             this.erstelleNeuesKonto(username.trim());
@@ -92,7 +103,7 @@ const Nutzerkonto = {
      * Erstellt ein neues Konto
      * @param {string} username - Benutzername
      */
-    erstelleNeuesKonto(username) {
+    async erstelleNeuesKonto(username) {
         if (typeof Nutzerspeicher === 'undefined') {
             console.error('[Nutzerkonto] Nutzerspeicher nicht verfügbar');
             return;
@@ -114,9 +125,9 @@ const Nutzerkonto = {
             }
             
             console.log('[Nutzerkonto] Neues Konto erstellt:', username);
-            alert('Neues Konto "' + username + '" erstellt!');
+            Popup.toast(`Neues Konto „${username}“ erstellt.`, { title: 'Konto erstellt', type: 'success' });
         } else {
-            alert('Fehler: Benutzername bereits vorhanden oder ungültig!');
+            await Popup.alert('Der Benutzername ist bereits vergeben oder ungültig.', { title: 'Konto nicht erstellt', type: 'error' });
         }
     },
 
@@ -311,7 +322,7 @@ const Nutzerkonto = {
     /**
      * Speichert die Benutzerdaten (Benutzername) für das aktive Konto
      */
-    speichereBenutzerdaten() {
+    async speichereBenutzerdaten() {
         const usernameInput = this.userCenterElement.querySelector('.custom-username');
         const username = usernameInput ? usernameInput.value.trim() : 'Gast!';
 
@@ -325,7 +336,7 @@ const Nutzerkonto = {
                 const nameExists = konten.some(k => k.username === username && k.id !== aktivesKonto.id);
                 
                 if (nameExists) {
-                    alert('Dieser Benutzername ist bereits vergeben!');
+                    await Popup.alert('Dieser Benutzername ist bereits vergeben.', { title: 'Name schon vergeben', type: 'warning' });
                     return;
                 }
             }
@@ -345,7 +356,7 @@ const Nutzerkonto = {
     /**
      * Löscht das aktive Konto
      */
-    loescheAktivesKonto() {
+    async loescheAktivesKonto() {
         if (typeof Nutzerspeicher === 'undefined') {
             console.error('[Nutzerkonto] Nutzerspeicher nicht verfügbar');
             return;
@@ -355,17 +366,21 @@ const Nutzerkonto = {
         const aktivesKonto = Nutzerspeicher.getAktivesKonto();
 
         if (!aktivesKonto) {
-            alert('Kein aktives Konto zum Löschen gefunden!');
+            await Popup.alert('Kein aktives Konto zum Löschen gefunden.', { title: 'Kein aktives Konto', type: 'warning' });
             return;
         }
 
         // Warnung wenn nur Gast-Konto existiert
         if (konten.length <= 1) {
-            alert('Das letzte Konto (Gast) kann nicht gelöscht werden!');
+            await Popup.alert('Das letzte Konto kann nicht gelöscht werden.', { title: 'Konto bleibt erhalten', type: 'warning' });
             return;
         }
 
-        const bestätigt = confirm('Möchtest du wirklich das Konto "' + aktivesKonto.username + '" löschen?\n\nWichtig: Alle Daten dieses Kontos gehen verloren!');
+        const bestätigt = await Popup.confirm(`Möchtest du das Konto „${aktivesKonto.username}“ wirklich löschen?\n\nDie Kontodaten gehen dabei verloren.`, {
+            title: 'Konto löschen',
+            type: 'warning',
+            confirmLabel: 'Konto löschen'
+        });
         
         if (bestätigt) {
             if (Nutzerspeicher.loescheKonto(aktivesKonto.id)) {
@@ -379,7 +394,7 @@ const Nutzerkonto = {
                 }
                 
                 console.log('[Nutzerkonto] Aktives Konto gelöscht:', aktivesKonto.username);
-                alert('Konto "' + aktivesKonto.username + '" wurde gelöscht!');
+                Popup.toast(`Konto „${aktivesKonto.username}“ wurde gelöscht.`, { title: 'Konto gelöscht', type: 'success' });
             }
         }
     },

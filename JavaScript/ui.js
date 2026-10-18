@@ -204,6 +204,8 @@ function openMusikplayerWindow() {
  */
 const WallhavenManager = {
     wallhavenWindow: null,
+    currentPage: 1,
+    lastPage: 1,
     
     /**
      * Öffnet das Wallhaven-Suchfenster
@@ -238,116 +240,88 @@ const WallhavenManager = {
             width: 800,
             height: 600
         });
+        const root = this.wallhavenWindow?.content;
+        root?.querySelector('.wallhaven-button')?.addEventListener('click', () => this._searchWallhaven(1));
+        root?.querySelector('.wallhaven-input')?.addEventListener('keydown', event => {
+            if (event.key === 'Enter') this._searchWallhaven(1);
+        });
     },
     
     /**
      * Sucht auf Wallhaven nach Wallpapers
      */
-    async _searchWallhaven() {
-        const searchInput = document.querySelector('.wallhaven-input');
-        const resultsContainer = document.getElementById('wallhaven-results');
-        
-
+    async _searchWallhaven(page = 1) {
+        const root = WindowManager.windows['wallhaven-search']?.content;
+        const searchInput = root?.querySelector('.wallhaven-input');
+        const resultsContainer = root?.querySelector('#wallhaven-results');
+        const pagination = root?.querySelector('#wallhaven-pagination');
         if (!searchInput || !resultsContainer) return;
-        
-        const query = searchInput.value;
-        const category = document.getElementById('wallhaven-category')?.value || '';
-        const purity = document.getElementById('wallhaven-purity')?.value || '';
-        const resolution = document.getElementById('wallhaven-resolution')?.value || '';
-        
-        if (!query && !category && !purity && !resolution) {
-            resultsContainer.innerHTML = '<p class="wallhaven-empty">Bitte gib Suchbegriffe oder Filter an</p>';
-            return;
-        }
-        
-        resultsContainer.innerHTML = '<p class="wallhaven-loading">Lade Wallpapers...</p>';
-        
+
+        const query = searchInput.value.trim();
+        const category = root.querySelector('#wallhaven-category')?.value || '111';
+        const purity = root.querySelector('#wallhaven-purity')?.value || '100';
+        const resolution = root.querySelector('#wallhaven-resolution')?.value || '';
+        const apiKey = root.querySelector('.wallhaven-api-key')?.value.trim() || '';
+        resultsContainer.replaceChildren();
+        resultsContainer.appendChild(this._statusMessage('wallhaven-loading', 'Suche auf Wallhaven…'));
+        if (pagination) pagination.replaceChildren();
+
         try {
-            // Für Demo-Zwecke verwenden wir lokale Bilder
-            const demoResults = this._getDemoWallpapers(query, category);
-            this._displayWallhavenResults({ data: demoResults }, resultsContainer);
-            
-            /*
-            // Echte API-Anfrage (benötigt API-Key)
-            const apiUrl = this._buildWallhavenUrl(query, category, purity, resolution);
+            const apiUrl = this._buildWallhavenUrl(query, category, purity, resolution, page, apiKey);
             const response = await fetch(apiUrl);
             const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || `Wallhaven antwortete mit HTTP ${response.status}.`);
+            }
+            this.currentPage = data.meta?.current_page || page;
+            this.lastPage = data.meta?.last_page || 1;
             this._displayWallhavenResults(data, resultsContainer);
-            */
+            this._renderWallhavenPagination(pagination);
         } catch (error) {
             console.error('[Wallhaven] Fehler:', error);
-            resultsContainer.innerHTML = '<p class="wallhaven-error">Fehler beim Laden. Verwende Demo-Bilder als Fallback.</p>';
-            const demoResults = this._getDemoWallpapers(query, category);
-            this._displayWallhavenResults({ data: demoResults }, resultsContainer);
+            resultsContainer.replaceChildren(this._statusMessage('wallhaven-error', `Wallhaven-Suche fehlgeschlagen: ${error.message}`));
         }
     },
-    
-    /**
-     * Gibt Demo-Wallpaper-Ergebnisse zurück
-     */
-    _getDemoWallpapers(query, category) {
-        const demoImages = [
-            {
-                id: 'demo1',
-                title: 'Natur Hintergrund',
-                path: '/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg',
-                thumbs: {
-                    large: '/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg',
-                    original: '/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg'
-                },
-                views: 1500,
-                favorites: 230
-            },
-            {
-                id: 'demo2',
-                title: 'Abstrakter Hintergrund',
-                path: '/Res/Bild/Logo/re-ive-logo.svg',
-                thumbs: {
-                    large: '/Res/Bild/Logo/re-ive-logo.svg',
-                    original: '/Res/Bild/Logo/re-ive-logo.svg'
-                },
-                views: 800,
-                favorites: 120
-            }
-        ];
-        
-        if (category === 'anime') {
-            return demoImages.filter(img => img.title.toLowerCase().includes('anime'));
-        }
-        if (category === 'people') {
-            return demoImages.filter(img => img.title.toLowerCase().includes('person') || img.title.toLowerCase().includes('menschen'));
-        }
-        
-        if (query) {
-            const lowerQuery = query.toLowerCase();
-            return demoImages.filter(img => img.title.toLowerCase().includes(lowerQuery));
-        }
-        
-        return demoImages;
+
+    _statusMessage(className, message) {
+        const element = document.createElement('p');
+        element.className = className;
+        element.textContent = message;
+        return element;
     },
     
     /**
      * Baut die Wallhaven API URL
      */
-    _buildWallhavenUrl(query, category, purity, resolution) {
+    _buildWallhavenUrl(query, category, purity, resolution, page = 1, apiKey = '') {
         const baseUrl = 'https://wallhaven.cc/api/v1/search';
         const params = new URLSearchParams();
-
-        params.set('apikey', 'Gy1LmUNdPWHnopdC4e6gws5fX9oDCZlR');
-        
         if (query) params.set('q', query);
-        if (category) params.set('categories', category);
-        if (purity) params.set('purity', purity);
-        if (resolution) {
-            const [width, height] = resolution.split('x');
-            params.set('resolutions', `${width}x${height}`);
-        }
-        
-        params.set('page', '1');
+        params.set('categories', category || '111');
+        params.set('purity', purity || '100');
+        if (resolution) params.set('resolutions', resolution);
+        if (apiKey) params.set('apikey', apiKey);
+        params.set('page', String(page));
         params.set('sorting', 'relevance');
         params.set('order', 'desc');
-        
         return `${baseUrl}?${params.toString()}`;
+    },
+
+    _renderWallhavenPagination(container) {
+        if (!container || this.lastPage <= 1) return;
+        const button = (label, page, disabled = false) => {
+            const element = document.createElement('button');
+            element.className = 'wallhaven-page';
+            element.textContent = label;
+            element.disabled = disabled;
+            element.addEventListener('click', () => this._searchWallhaven(page));
+            return element;
+        };
+        container.append(
+            button('‹', this.currentPage - 1, this.currentPage <= 1),
+            this._statusMessage('wallhaven-page-label', `${this.currentPage} / ${this.lastPage}`),
+            button('›', this.currentPage + 1, this.currentPage >= this.lastPage)
+        );
     },
     
     /**
@@ -355,46 +329,53 @@ const WallhavenManager = {
      */
     _displayWallhavenResults(data, container) {
         if (!data || !data.data || data.data.length === 0) {
-            container.innerHTML = '<p class="wallhaven-empty">Keine Wallpapers gefunden</p>';
+            container.replaceChildren(this._statusMessage('wallhaven-empty', 'Keine Wallpapers gefunden'));
             return;
         }
-        
-        const wallpapers = data.data;
-        let html = '<div class="wallhaven-grid">';
-        
-        wallpapers.forEach(wallpaper => {
-            const thumbUrl = wallpaper.thumbs?.large || wallpaper.thumbs?.original || wallpaper.path;
-            const wallpaperUrl = wallpaper.path || `https://wallhaven.cc/wallpaper/${wallpaper.id}`;
-            const escapedUrl = wallpaperUrl.replace(/'/g, "\\'");
-            
-            html += `
-                <div class="wallhaven-card" onclick="window.WallhavenManager._selectWallpaper('${escapedUrl}')">
-                    <img src="${thumbUrl}" alt="Wallpaper" class="wallhaven-thumb" loading="lazy">
-                    <div class="wallhaven-card-info">
-                        <span class="wallhaven-card-title">${wallpaper.title || 'Unbekannt'}</span>
-                        <span class="wallhaven-card-stats">${wallpaper.views} Views | ${wallpaper.favorites} Favorites</span>
-                    </div>
-                </div>
-            `;
+        const grid = document.createElement('div');
+        grid.className = 'wallhaven-grid';
+        data.data.forEach(wallpaper => {
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className = 'wallhaven-card';
+            card.style.cssText = 'width:100%;padding:0;border:0;color:inherit;font:inherit;text-align:left;cursor:pointer;';
+            card.addEventListener('click', () => this._selectWallpaper(wallpaper.path || `https://wallhaven.cc/wallpaper/${wallpaper.id}`));
+            const image = document.createElement('img');
+            image.src = wallpaper.thumbs?.large || wallpaper.thumbs?.original || wallpaper.path || '';
+            image.alt = String(wallpaper.id || 'Wallhaven wallpaper');
+            image.className = 'wallhaven-thumb';
+            image.loading = 'lazy';
+            const info = document.createElement('div');
+            info.className = 'wallhaven-card-info';
+            const title = document.createElement('span');
+            title.className = 'wallhaven-card-title';
+            title.textContent = wallpaper.id || 'Wallhaven Wallpaper';
+            const stats = document.createElement('span');
+            stats.className = 'wallhaven-card-stats';
+            stats.textContent = `${Number(wallpaper.views || 0).toLocaleString()} Views | ${Number(wallpaper.favorites || 0).toLocaleString()} Favorites`;
+            info.append(title, stats);
+            card.append(image, info);
+            grid.appendChild(card);
         });
-        
-        html += '</div>';
-        container.innerHTML = html;
+        container.replaceChildren(grid);
     },
     
     /**
      * Wählt ein Wallpaper aus
      */
-    _selectWallpaper(wallpaperUrl) {
-        if (typeof Nutzerspeicher !== 'undefined') {
-            Nutzerspeicher.speichereWallhavenHintergrund(wallpaperUrl);
+    async _selectWallpaper(wallpaperUrl) {
+        try {
+            if (typeof Nutzerspeicher === 'undefined' || !await Nutzerspeicher.speichereWallhavenHintergrund(wallpaperUrl)) {
+                throw new Error('Das Wallpaper konnte nicht gespeichert oder aktiviert werden.');
+            }
+            if (typeof WindowManager !== 'undefined') WindowManager.closeWindow('wallhaven-search');
+            this._showSuccess('Hintergrund erfolgreich geändert!');
+        } catch (error) {
+            console.error('[Wallhaven] Wallpaper konnte nicht angewendet werden:', error);
+            const root = WindowManager.windows['wallhaven-search']?.content;
+            const results = root?.querySelector('#wallhaven-results');
+            if (results) results.replaceChildren(this._statusMessage('wallhaven-error', error.message));
         }
-        
-        if (typeof WindowManager !== 'undefined') {
-            WindowManager.closeWindow('wallhaven-search');
-        }
-        
-        this._showSuccess('Hintergrund erfolgreich geändert!');
     },
     
     /**

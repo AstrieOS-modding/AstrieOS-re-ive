@@ -1,0 +1,21 @@
+<template id="popup-ui">
+    <div class="popup-system">
+        <div class="popup-backdrop" data-popup-backdrop hidden>
+            <section class="popup-dialog" role="dialog" aria-modal="true" aria-labelledby="popup-title" aria-describedby="popup-message" tabindex="-1">
+                <div class="popup-dialog-topline">
+                    <span class="popup-mark" data-popup-mark aria-hidden="true">i</span>
+                    <button class="popup-close" type="button" data-popup-cancel aria-label="Popup schließen">×</button>
+                </div>
+                <p class="popup-eyebrow" data-popup-eyebrow>Hey!</p>
+                <h2 class="popup-title" id="popup-title" data-popup-title>Hinweis</h2>
+                <p class="popup-message" id="popup-message" data-popup-message></p>
+                <label class="popup-input-label" data-popup-input-label hidden>
+                    <span data-popup-input-caption></span>
+                    <input class="popup-input" data-popup-input type="text" autocomplete="off">
+                </label>
+                <div class="popup-actions" data-popup-actions></div>
+            </section>
+        </div>
+        <div class="popup-toasts" data-popup-toasts aria-live="polite" aria-relevant="additions"></div>
+    </div>
+</template>

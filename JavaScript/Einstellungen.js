@@ -62,7 +62,10 @@ const EinstellungenHintergrund = {
      * Initialisiert die Hintergrund-Einstellungen
      */
     init() {
-        if (this.initialized) return;
+        if (this.initialized) {
+            this._renderWallpaperListe();
+            return;
+        }
         this.initialized = true;
 
         this._attachEventListeners();
@@ -134,7 +137,7 @@ const EinstellungenHintergrund = {
     /**
      * Verarbeitet hochgeladene Datei
      */
-    _handleFileUpload(file) {
+    async _handleFileUpload(file) {
         if (typeof Nutzerspeicher === 'undefined') {
             this._showError('Nutzerspeicher nicht verfügbar!');
             return;
@@ -142,7 +145,12 @@ const EinstellungenHintergrund = {
 
         const maxSize = 100 * 1024 * 1024; // 100MB
         if (file.size > maxSize) {
-            if (!confirm(`Die Datei ist sehr groß (${(file.size / (1024 * 1024)).toFixed(2)}MB). Fortfahren?`)) {
+            const confirmed = await Popup.confirm(`Die Datei ist sehr groß (${(file.size / (1024 * 1024)).toFixed(2)} MB). Möchtest du fortfahren?`, {
+                title: 'Große Datei',
+                type: 'warning',
+                confirmLabel: 'Trotzdem laden'
+            });
+            if (!confirmed) {
                 return;
             }
         }
@@ -193,76 +201,134 @@ const EinstellungenHintergrund = {
     /**
      * Rendert die Wallpaper-Liste
      */
-    _renderWallpaperListe() {
+    async _renderWallpaperListe() {
         if (typeof Nutzerspeicher === 'undefined') return;
+
+        if (Nutzerspeicher._wallpaperStorageReady) await Nutzerspeicher._wallpaperStorageReady;
 
         const wallpapers = Nutzerspeicher.ladeWallpaperListe();
         const container = document.querySelector('.Hintergrund-btn');
 
         if (!container) return;
 
-        container.innerHTML = ''; // Container zuerst leeren
+        container.replaceChildren();
 
         if (wallpapers.length === 0) {
-            container.innerHTML = '<p class="Hintergrund-leer">Keine Wallpapers in der Galerie</p>';
+            const emptyMessage = document.createElement('p');
+            emptyMessage.className = 'Hintergrund-leer';
+            emptyMessage.textContent = 'Keine Wallpapers in der Galerie :(';
+            container.appendChild(emptyMessage);
             return;
         }
 
-        let html = '<div class="wallpaper-gallery">';
+        const gallery = document.createElement('div');
+        gallery.className = 'wallpaper-gallery';
 
-        wallpapers.forEach(wallpaper => {
-            const isCurrent = wallpaper.isCurrent;
+        const resolvedWallpapers = await Promise.all(wallpapers.map(async wallpaper => {
+            try {
+                return {
+                    ...wallpaper,
+                    resolvedUrl: await Nutzerspeicher.resolveWallpaperUrl(wallpaper.url),
+                    resolvedThumbnail: await Nutzerspeicher.resolveWallpaperUrl(wallpaper.thumbnail || wallpaper.url)
+                };
+            } catch (error) {
+                console.error('[Einstellungen] Wallpaper-Datei konnte nicht angezeigt werden:', error);
+                return { ...wallpaper, resolvedUrl: '', resolvedThumbnail: '' };
+            }
+        }));
+
+        resolvedWallpapers.forEach(wallpaper => {
+            const isCurrent = Boolean(wallpaper.isCurrent);
             const isVideo = wallpaper.type === 'video';
+            const item = document.createElement('div');
+            item.className = `wallpaper-item${isCurrent ? ' active' : ''}`;
+            item.title = String(wallpaper.name || 'Wallpaper');
+            item.addEventListener('click', () => this.setWallpaper(wallpaper.id));
 
-            html += `
-                <div class="wallpaper-item ${isCurrent ? 'active' : ''}"
-                     onclick="EinstellungenHintergrund.setWallpaper('${wallpaper.id}')"
-                     title="${wallpaper.name}">
+            const thumbnail = document.createElement('div');
+            thumbnail.className = 'wallpaper-thumbnail';
+            if (isVideo) {
+                const video = document.createElement('video');
+                video.autoplay = true;
+                video.loop = true;
+                video.muted = true;
+                video.playsInline = true;
+                video.className = 'wallpaper-video-thumb';
+                if (String(wallpaper.url).startsWith('data:')) video.controls = true;
+                const source = document.createElement('source');
+                source.src = wallpaper.resolvedUrl;
+                source.type = this._getVideoMimeType(String(wallpaper.resolvedUrl));
+                video.appendChild(source);
+                thumbnail.appendChild(video);
+            } else {
+                const image = document.createElement('img');
+                image.src = wallpaper.resolvedThumbnail || wallpaper.resolvedUrl || '';
+                image.alt = String(wallpaper.name || 'Wallpaper');
+                image.loading = 'lazy';
+                thumbnail.appendChild(image);
+            }
 
-                    <div class="wallpaper-thumbnail">
-                        ${isVideo ? `
-                            <video autoplay loop muted playsinline class="wallpaper-video-thumb" ${wallpaper.url.startsWith('data:') ? 'controls' : ''}>
-                                <source src="${wallpaper.url}" type="${this._getVideoMimeType(wallpaper.url)}">
-                            </video>
-                        ` : `
-                            <img src="${wallpaper.thumbnail}" alt="${wallpaper.name}" loading="lazy">
-                        `}
-                    </div>
+            const info = document.createElement('div');
+            info.className = 'wallpaper-info';
+            const name = document.createElement('span');
+            name.className = 'wallpaper-name';
+            name.textContent = String(wallpaper.name || 'Wallpaper');
+            const type = document.createElement('span');
+            type.className = 'wallpaper-type';
+            type.textContent = this._getTypeLabel(wallpaper.type);
+            info.append(name, type);
 
-                    <div class="wallpaper-info">
-                        <span class="wallpaper-name">${wallpaper.name}</span>
-                        <span class="wallpaper-type">${this._getTypeLabel(wallpaper.type)}</span>
-                    </div>
+            const actions = document.createElement('div');
+            actions.className = 'wallpaper-actions';
+            const makeAction = (className, title, icon, onClick) => {
+                const button = document.createElement('button');
+                button.className = className;
+                button.title = title;
+                button.addEventListener('click', onClick);
+                const iconImage = document.createElement('img');
+                iconImage.src = icon;
+                iconImage.width = 18;
+                iconImage.height = 18;
+                iconImage.alt = '';
+                button.appendChild(iconImage);
+                return button;
+            };
+            actions.append(
+                makeAction('wallpaper-set-btn', 'Als Hintergrund setzen', '/Res/Bild/Icon/EInstellungen/Hintergrund formaten/image_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg', event => {
+                    event.stopPropagation();
+                    this.setWallpaper(wallpaper.id);
+                }),
+                makeAction('wallpaper-delete-btn', 'Löschen', '/Res/Bild/Icon/Datein/Folder/delete_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg', event => {
+                    event.stopPropagation();
+                    this.deleteWallpaper(wallpaper.id, event);
+                })
+            );
 
-                    <div class="wallpaper-actions">
-                        <button class="wallpaper-set-btn" title="Als Hintergrund setzen">
-                            <img src="/Res/Bild/Icon/EInstellungen/Hintergrund formaten/image_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" width="18" height="18">
-                        </button>
-                        <button class="wallpaper-delete-btn"
-                                onclick="event.stopPropagation(); EinstellungenHintergrund.deleteWallpaper('${wallpaper.id}', event)"
-                                title="Löschen">
-                            <img src="/Res/Bild/Icon/Datein/Folder/delete_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" width="18" height="18">
-                        </button>
-                    </div>
-
-                    ${isCurrent ? '<div class="wallpaper-current-badge">Aktiv</div>' : ''}
-                </div>
-            `;
+            item.append(thumbnail, info, actions);
+            if (isCurrent) {
+                const badge = document.createElement('div');
+                badge.className = 'wallpaper-current-badge';
+                badge.textContent = 'Aktiv';
+                item.appendChild(badge);
+            }
+            gallery.appendChild(item);
         });
 
-        html += '</div>';
-        container.innerHTML = html;
+        container.appendChild(gallery);
     },
 
     /**
      * Setzt ein Wallpaper als Hintergrund
      * @param {string} id - Wallpaper-ID
      */
-    setWallpaper(id) {
+    async setWallpaper(id) {
         if (typeof Nutzerspeicher !== 'undefined') {
-            Nutzerspeicher.setzeWallpaperAlsAktiv(id);
-            this._renderWallpaperListe();
-            this._showSuccess('Hintergrund geändert!');
+            if (await Nutzerspeicher.setzeWallpaperAlsAktiv(id)) {
+                this._renderWallpaperListe();
+                this._showSuccess('Hintergrund geändert!');
+            } else {
+                this._showError('Hintergrund konnte nicht geladen oder gespeichert werden.');
+            }
         }
     },
 
@@ -271,21 +337,25 @@ const EinstellungenHintergrund = {
      * @param {string} id - Wallpaper-ID
      * @param {Event} event - Event-Objekt
      */
-    deleteWallpaper(id, event) {
+    async deleteWallpaper(id, event) {
         if (event) event.stopPropagation();
 
-        if (confirm('Möchtest du dieses Wallpaper wirklich löschen?')) {
+        if (await Popup.confirm('Möchtest du dieses Wallpaper wirklich löschen?', {
+            title: 'Wallpaper löschen',
+            type: 'warning',
+            confirmLabel: 'Löschen'
+        })) {
             if (typeof Nutzerspeicher !== 'undefined') {
                 // Speichere das Wallpaper-Objekt BEVOR es gelöscht wird
                 const wallpapersBefore = Nutzerspeicher.ladeWallpaperListe();
                 const deletedWallpaper = wallpapersBefore.find(wp => wp.id === id);
 
-                const success = Nutzerspeicher.entferneWallpaper(id);
+                const success = await Nutzerspeicher.entferneWallpaper(id);
 
                 if (success) {
                     // Prüfe ob gelöschtes Wallpaper aktiv war
                     const settings = Nutzerspeicher.laden();
-                    if (deletedWallpaper && deletedWallpaper.url === settings.hintergrundUrl) {
+                    if (deletedWallpaper && (deletedWallpaper.url === settings.hintergrundUrl || deletedWallpaper.id === settings.hintergrundWallpaperId)) {
                         // Wenn aktives Wallpaper gelöscht wurde, setze Standard
                         if (typeof Nutzerspeicher.standardHintergrund === 'function') {
                             Nutzerspeicher.standardHintergrund();
@@ -397,10 +467,10 @@ const EinstellungenHintergrund = {
     },
 
     _showError(message) {
-        if (typeof Benachrichtigung !== 'undefined') {
-            new Benachrichtigung('Fehler', message, '/Res/Bild/Icon/Topbar/error_24dp_FF0000_FILL1_wght400_GRAD0_opsz24.svg');
+        if (typeof Popup !== 'undefined') {
+            Popup.alert(message, { title: 'Fehler', type: 'error' });
         } else {
-            alert(`Fehler: ${message}`);
+            console.error(`[Einstellungen] ${message}`);
         }
     }
 };

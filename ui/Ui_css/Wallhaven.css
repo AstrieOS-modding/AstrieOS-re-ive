@@ -162,6 +162,37 @@
     background-color: rgb(0 0 0 / 0.45);
     cursor: pointer;
     transition: all 0.18s ease;
+    border: 0;
+    color: #ffffff;
+    font: inherit;
+}
+
+.wallhaven-page:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.wallhaven-page-label {
+    margin: 0;
+    align-self: center;
+}
+
+.wallhaven-api-key-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    opacity: 0.75;
+}
+
+.wallhaven-api-key {
+    min-width: 220px;
+    padding: 7px 10px;
+    border: 0;
+    border-radius: 10px;
+    color: #ffffff;
+    background: rgb(0 0 0 / 0.35);
+    font: inherit;
 }
 
 .wallhaven-page:hover {

@@ -3,6 +3,11 @@ const Nutzerspeicher = {
     ACCOUNTS_KEY: 'astrieos_user_accounts',
     ACTIVE_ACCOUNT_KEY: 'astrieos_active_account',
     WALLPAPERS_KEY: 'astrieos_wallpapers',
+    WALLPAPER_DB_NAME: 'astrieos_wallpaper_files',
+    WALLPAPER_DB_STORE: 'wallpapers',
+    _wallpaperDatabasePromise: null,
+    _wallpaperStorageReady: null,
+    _wallpaperObjectUrls: new Map(),
 
     /**
      * Initialisiert das Nutzerspeicher-System
@@ -11,18 +16,18 @@ const Nutzerspeicher = {
         // Lade gespeicherte Einstellungen beim Start
         const settings = this.laden();
 
-        // Prüfe ob Hintergrund gespeichert ist und lade ihn
-        if (settings.hintergrundUrl) {
-            this.ladeHintergrund(settings.hintergrundUrl, settings.backgroundType);
-        }
-
         // Initialisiere Konten-System
         this.initialisiereKonten();
 
-        // Prüfe ob Benutzername gespeichert ist (für Kompatibilität)
-        if (settings.username) {
-            document.getElementById('username').textContent = settings.username;
-        }
+        this._wallpaperStorageReady = this._initializeWallpaperStorage()
+            .then(() => this._restoreSavedBackground())
+            .catch(error => {
+                console.error('[Nutzerspeicher] Wallpaper-Speicher konnte nicht initialisiert werden:', error);
+                return this._restoreSavedBackground().catch(restoreError => {
+                    console.error('[Nutzerspeicher] Gespeicherter Hintergrund konnte nicht wiederhergestellt werden:', restoreError);
+                });
+            })
+            .then(() => true);
 
         console.log('[Nutzerspeicher] Initialisiert. Einstellungen:', settings);
     },
@@ -98,12 +103,18 @@ const Nutzerspeicher = {
     /**
      * Speichert spezifische Hintergrund-URL mit Typ
      */
-    hintergrundSpeichern(url, type = 'static') {
+    hintergrundSpeichern(url, type = 'static', wallpaperId = null) {
         const einstellungen = this.laden();
-        einstellungen.hintergrundUrl = url;
+        if (wallpaperId) {
+            delete einstellungen.hintergrundUrl;
+            einstellungen.hintergrundWallpaperId = wallpaperId;
+        } else {
+            delete einstellungen.hintergrundWallpaperId;
+            einstellungen.hintergrundUrl = url;
+        }
         einstellungen.hintergrundDatum = new Date().toISOString();
         einstellungen.backgroundType = type;
-        this.speichern(einstellungen);
+        return this.speichern(einstellungen);
     },
 
     /**
@@ -113,6 +124,7 @@ const Nutzerspeicher = {
         const einstellungen = this.laden();
         return {
             url: einstellungen.hintergrundUrl || null,
+            wallpaperId: einstellungen.hintergrundWallpaperId || null,
             type: einstellungen.backgroundType || 'static'
         };
     },
@@ -123,6 +135,7 @@ const Nutzerspeicher = {
     hintergrundLöschen() {
         const einstellungen = this.laden();
         delete einstellungen.hintergrundUrl;
+        delete einstellungen.hintergrundWallpaperId;
         delete einstellungen.backgroundType;
         this.speichern(einstellungen);
 
@@ -151,18 +164,23 @@ const Nutzerspeicher = {
         if (videoElement) {
             videoElement.style.display = 'none';
             videoElement.pause();
+            videoElement.removeAttribute('src');
         }
 
         switch (type) {
             case 'video':
                 if (videoElement) {
+                    if (imgElement) imgElement.style.display = 'none';
                     videoElement.src = url;
+                    videoElement.style.zIndex = '0';
                     videoElement.style.display = 'block';
                     videoElement.load();
                     videoElement.play().catch(e => {
                         console.error('[Nutzerspeicher] Video Playback Fehler:', e);
+                        videoElement.style.display = 'none';
                         if (imgElement) {
                             imgElement.src = '/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg';
+                            imgElement.style.objectFit = 'cover';
                             imgElement.style.display = 'block';
                         }
                     });
@@ -172,7 +190,7 @@ const Nutzerspeicher = {
             case 'live':
                 if (imgElement) {
                     imgElement.src = url;
-                    imgElement.style.objectFit = 'contain';
+                    imgElement.style.objectFit = 'cover';
                     imgElement.style.display = 'block';
                 }
                 break;
@@ -252,9 +270,7 @@ const Nutzerspeicher = {
         };
 
         wallpapers.unshift(newWallpaper); // Neueste zuerst
-        this.speichereWallpaperListe(wallpapers);
-
-        return newWallpaper;
+        return this.speichereWallpaperListe(wallpapers) ? newWallpaper : null;
     },
 
     /**
@@ -262,7 +278,7 @@ const Nutzerspeicher = {
      * @param {string} id - Wallpaper-ID
      * @returns {boolean} Erfolg
      */
-    entferneWallpaper(id) {
+    async entferneWallpaper(id) {
         let wallpapers = this.ladeWallpaperListe();
         const index = wallpapers.findIndex(wp => wp.id === id);
 
@@ -272,7 +288,15 @@ const Nutzerspeicher = {
         }
 
         wallpapers.splice(index, 1);
-        this.speichereWallpaperListe(wallpapers);
+        if (!this.speichereWallpaperListe(wallpapers)) return false;
+        try {
+            await this._deleteWallpaperBlob(id);
+        } catch (error) {
+            console.warn('[Nutzerspeicher] Wallpaper-Datei konnte nicht entfernt werden:', error);
+        }
+        const objectUrl = this._wallpaperObjectUrls.get(id);
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        this._wallpaperObjectUrls.delete(id);
         return true;
     },
 
@@ -280,7 +304,7 @@ const Nutzerspeicher = {
      * Setzt ein Wallpaper als aktuellen Hintergrund
      * @param {string} id - Wallpaper-ID
      */
-    setzeWallpaperAlsAktiv(id) {
+    async setzeWallpaperAlsAktiv(id) {
         const wallpapers = this.ladeWallpaperListe();
         const wallpaper = wallpapers.find(wp => wp.id === id);
 
@@ -289,15 +313,31 @@ const Nutzerspeicher = {
             return false;
         }
 
+        const previousSettings = this.laden();
+        let resolvedUrl;
+        try {
+            resolvedUrl = await this.resolveWallpaperUrl(wallpaper.url);
+        } catch (error) {
+            console.error('[Nutzerspeicher] Wallpaper-Datei konnte nicht geladen werden:', error);
+            return false;
+        }
+
+        const savedBackground = wallpaper.url.startsWith('indexeddb:')
+            ? this.hintergrundSpeichern(null, wallpaper.type, id)
+            : this.hintergrundSpeichern(wallpaper.url, wallpaper.type);
+        if (!savedBackground) return false;
+
         // Aktualisiere aktiven Status
         const updatedWallpapers = wallpapers.map(wp => ({
             ...wp,
             isCurrent: wp.id === id
         }));
 
-        this.speichereWallpaperListe(updatedWallpapers);
-        this.hintergrundSpeichern(wallpaper.url, wallpaper.type);
-        this.ladeHintergrund(wallpaper.url, wallpaper.type);
+        if (!this.speichereWallpaperListe(updatedWallpapers)) {
+            this.speichern(previousSettings);
+            return false;
+        }
+        this.ladeHintergrund(resolvedUrl, wallpaper.type);
 
         return true;
     },
@@ -335,33 +375,23 @@ const Nutzerspeicher = {
     /* ===== SPEZIALISIERTE METHODEN ===== */
 
     /**
-     * Speichert eine Datei als Wallpaper (Base64)
+     * Speichert eine Datei als Blob in IndexedDB
      * @param {File} file - Hochgeladene Datei
      * @param {string} type - Typ: 'static', 'live', oder 'video'
      * @param {Function} callback - Optional: Callback nach erfolgreichem Speichern
      */
-    speichereDateiAlsHintergrund(file, type = 'static', callback = null) {
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-            const base64Url = event.target.result;
-            // Füge zur Liste hinzu
-            this.fügeWallpaperHinzu(base64Url, type);
-            // Setze als aktiv
-            const wallpapers = this.ladeWallpaperListe();
-            const newWallpaper = wallpapers[0];
-            if (newWallpaper) {
-                this.setzeWallpaperAlsAktiv(newWallpaper.id);
-            }
+    async speichereDateiAlsHintergrund(file, type = 'static', callback = null) {
+        try {
+            const id = `wallpaper_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+            await this._storeWallpaperBlob(id, file, type);
+            const addedWallpaper = this.fügeWallpaperHinzu(`indexeddb:${id}`, type);
+            if (!addedWallpaper) throw new Error('Wallpaper-Metadaten konnten nicht gespeichert werden.');
+            if (!await this.setzeWallpaperAlsAktiv(addedWallpaper.id)) throw new Error('Wallpaper konnte nicht aktiviert werden.');
             if (callback) callback(true);
-        };
-
-        reader.onerror = (error) => {
-            console.error('[Nutzerspeicher] Fehler beim Lesen der Datei:', error);
+        } catch (error) {
+            console.error('[Nutzerspeicher] Fehler beim Speichern des Wallpapers:', error);
             if (callback) callback(false, error);
-        };
-
-        reader.readAsDataURL(file);
+        }
     },
 
     /**
@@ -370,38 +400,19 @@ const Nutzerspeicher = {
      * @param {Function} callback - Optional: Callback nach erfolgreichem Speichern
      */
     speichereVideoAlsHintergrund(file, callback = null) {
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-            const base64Url = event.target.result;
-            this.fügeWallpaperHinzu(base64Url, 'video');
-            const wallpapers = this.ladeWallpaperListe();
-            const newWallpaper = wallpapers[0];
-            if (newWallpaper) {
-                this.setzeWallpaperAlsAktiv(newWallpaper.id);
-            }
-            if (callback) callback(true);
-        };
-
-        reader.onerror = (error) => {
-            console.error('[Nutzerspeicher] Fehler beim Lesen der Videodatei:', error);
-            if (callback) callback(false, error);
-        };
-
-        reader.readAsDataURL(file);
+        return this.speichereDateiAlsHintergrund(file, 'video', callback);
     },
 
     /**
      * Speichert Wallhaven-Bild-URL
      */
-    speichereWallhavenHintergrund(wallhavenUrl) {
+    async speichereWallhavenHintergrund(wallhavenUrl) {
         const direkteUrl = this.konvertiereWallhavenUrl(wallhavenUrl);
         // Füge zur Liste hinzu
         const newWallpaper = this.fügeWallpaperHinzu(direkteUrl, 'static');
         // Setze als aktiv
-        if (newWallpaper) {
-            this.setzeWallpaperAlsAktiv(newWallpaper.id);
-        }
+        if (!newWallpaper) return false;
+        return this.setzeWallpaperAlsAktiv(newWallpaper.id);
     },
 
     /**
@@ -818,7 +829,121 @@ const Nutzerspeicher = {
             console.error('[Nutzerspeicher] Fehler beim Lesen der Banner-Datei:', error);
         };
         reader.readAsDataURL(file);
-    }
+    },
+    _openWallpaperDatabase() {
+        if (!('indexedDB' in window)) return Promise.reject(new Error('IndexedDB wird von diesem Browser nicht unterstützt.'));
+        if (!this._wallpaperDatabasePromise) {
+            this._wallpaperDatabasePromise = new Promise((resolve, reject) => {
+                const request = indexedDB.open(this.WALLPAPER_DB_NAME, 1);
+                request.onupgradeneeded = () => {
+                    const database = request.result;
+                    if (!database.objectStoreNames.contains(this.WALLPAPER_DB_STORE)) {
+                        database.createObjectStore(this.WALLPAPER_DB_STORE, { keyPath: 'id' });
+                    }
+                };
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error || new Error('IndexedDB konnte nicht geöffnet werden.'));
+                request.onblocked = () => reject(new Error('IndexedDB wird durch einen anderen Tab blockiert.'));
+            });
+        }
+        return this._wallpaperDatabasePromise;
+    },
+
+    async _storeWallpaperBlob(id, blob, type) {
+        const database = await this._openWallpaperDatabase();
+        return new Promise((resolve, reject) => {
+            const transaction = database.transaction(this.WALLPAPER_DB_STORE, 'readwrite');
+            transaction.objectStore(this.WALLPAPER_DB_STORE).put({ id, blob, type });
+            transaction.oncomplete = () => resolve(true);
+            transaction.onerror = () => reject(transaction.error || new Error('Datei konnte nicht gespeichert werden.'));
+            transaction.onabort = () => reject(transaction.error || new Error('Speichern der Datei wurde abgebrochen.'));
+        });
+    },
+
+    async _loadWallpaperBlob(id) {
+        const database = await this._openWallpaperDatabase();
+        return new Promise((resolve, reject) => {
+            const request = database.transaction(this.WALLPAPER_DB_STORE, 'readonly').objectStore(this.WALLPAPER_DB_STORE).get(id);
+            request.onsuccess = () => resolve(request.result?.blob || null);
+            request.onerror = () => reject(request.error || new Error('Datei konnte nicht geladen werden.'));
+        });
+    },
+
+    async _deleteWallpaperBlob(id) {
+        const database = await this._openWallpaperDatabase();
+        return new Promise((resolve, reject) => {
+            const transaction = database.transaction(this.WALLPAPER_DB_STORE, 'readwrite');
+            transaction.objectStore(this.WALLPAPER_DB_STORE).delete(id);
+            transaction.oncomplete = () => resolve(true);
+            transaction.onerror = () => reject(transaction.error || new Error('Datei konnte nicht gelöscht werden.'));
+            transaction.onabort = () => reject(transaction.error || new Error('Löschen der Datei wurde abgebrochen.'));
+        });
+    },
+
+    async resolveWallpaperUrl(value) {
+        if (typeof value !== 'string' || !value.startsWith('indexeddb:')) return value;
+        const id = value.slice('indexeddb:'.length);
+        if (this._wallpaperObjectUrls.has(id)) return this._wallpaperObjectUrls.get(id);
+        const blob = await this._loadWallpaperBlob(id);
+        if (!blob) throw new Error('Wallpaper-Datei fehlt im lokalen Speicher.');
+        const objectUrl = URL.createObjectURL(blob);
+        this._wallpaperObjectUrls.set(id, objectUrl);
+        return objectUrl;
+    },
+
+    async _initializeWallpaperStorage() {
+        await this._openWallpaperDatabase();
+        const wallpapers = this.ladeWallpaperListe();
+        const settings = this.laden();
+        const legacyActiveUrl = settings.hintergrundUrl;
+        let activeWallpaperId = null;
+        let changed = false;
+        for (const wallpaper of wallpapers) {
+            if (typeof wallpaper.url === 'string' && wallpaper.url.startsWith('data:')) {
+                const legacyUrl = wallpaper.url;
+                const blob = await (await fetch(wallpaper.url)).blob();
+                await this._storeWallpaperBlob(wallpaper.id, blob, wallpaper.type);
+                wallpaper.url = `indexeddb:${wallpaper.id}`;
+                if (typeof wallpaper.thumbnail === 'string' && wallpaper.thumbnail.startsWith('data:')) {
+                    wallpaper.thumbnail = `indexeddb:${wallpaper.id}`;
+                }
+                if (legacyUrl === legacyActiveUrl) activeWallpaperId = wallpaper.id;
+                changed = true;
+            }
+        }
+        if (changed && !this.speichereWallpaperListe(wallpapers)) throw new Error('Migrierte Wallpaper-Liste konnte nicht gespeichert werden.');
+
+        if (typeof legacyActiveUrl === 'string' && legacyActiveUrl.startsWith('data:')) {
+            const wallpaper = activeWallpaperId
+                ? wallpapers.find(item => item.id === activeWallpaperId)
+                : null;
+            if (wallpaper) {
+                delete settings.hintergrundUrl;
+                settings.hintergrundWallpaperId = wallpaper.id;
+                settings.backgroundType = wallpaper.type;
+                if (!this.speichern(settings)) throw new Error('Migrierte Hintergrund-Einstellung konnte nicht gespeichert werden.');
+            } else {
+                const id = `wallpaper_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+                const blob = await (await fetch(legacyActiveUrl)).blob();
+                await this._storeWallpaperBlob(id, blob, settings.backgroundType || 'static');
+                const migrated = this.fügeWallpaperHinzu(`indexeddb:${id}`, settings.backgroundType || 'static');
+                if (!migrated) throw new Error('Alter Hintergrund konnte nicht in die Galerie migriert werden.');
+                delete settings.hintergrundUrl;
+                settings.hintergrundWallpaperId = migrated.id;
+                if (!this.speichern(settings)) throw new Error('Migrierte Hintergrund-Einstellung konnte nicht gespeichert werden.');
+            }
+        }
+    },
+
+    async _restoreSavedBackground() {
+        const settings = this.laden();
+        if (settings.hintergrundWallpaperId) {
+            const url = await this.resolveWallpaperUrl(`indexeddb:${settings.hintergrundWallpaperId}`);
+            this.ladeHintergrund(url, settings.backgroundType);
+        } else if (settings.hintergrundUrl) {
+            this.ladeHintergrund(settings.hintergrundUrl, settings.backgroundType);
+        }
+    },
 };
 
 // Initialisiere beim Laden der Seite
