@@ -51,7 +51,7 @@ SettingsDebugTools.init();
 
 /**
  * Einstellungen-System für Hintergrund-Verwaltung
- * Ermöglicht Benutzern das Ändern des Hintergrunds über Upload oder externe Dienste
+ * Unterstützt: Wallpaper-Liste, Statische Bilder, Animierte GIFs, Videos
  */
 
 const EinstellungenHintergrund = {
@@ -67,6 +67,8 @@ const EinstellungenHintergrund = {
 
         this._attachEventListeners();
         this._loadBackgroundSettings();
+        this._renderWallpaperListe(); // Liste beim Start anzeigen
+
         console.log('[EinstellungenHintergrund] Initialisiert');
     },
 
@@ -97,7 +99,7 @@ const EinstellungenHintergrund = {
                 if (typeof WallhavenManager !== 'undefined') {
                     WallhavenManager.openWallhavenWindow();
                 } else {
-                    console.error('[EinstellungenHintergrund] WallhavenManager nicht verfügbar');
+                    this._showError('Wallhaven-Integration nicht verfügbar!');
                 }
             });
         }
@@ -109,13 +111,12 @@ const EinstellungenHintergrund = {
     },
 
     /**
-     * Öffnet den Datei-Upload Dialog für Hintergrundbilder und Videos
+     * Öffnet den Datei-Upload Dialog
      */
     openHintergrundUpload() {
         const input = document.createElement('input');
         input.type = 'file';
-        // Unterstütze alle Bild- und Videoformate
-        input.accept = 'image/*, video/mp4, video/webm, video/mov, video/avi, video/mkv';
+        input.accept = 'image/*, video/*, image/gif, image/apng';
         input.style.display = 'none';
 
         input.addEventListener('change', (event) => {
@@ -132,74 +133,230 @@ const EinstellungenHintergrund = {
 
     /**
      * Verarbeitet hochgeladene Datei
-     * @param {File} file - Hochgeladene Datei
      */
     _handleFileUpload(file) {
-        // Dateigröße prüfen - nur Warnung bei sehr großen Dateien (>100MB)
+        if (typeof Nutzerspeicher === 'undefined') {
+            this._showError('Nutzerspeicher nicht verfügbar!');
+            return;
+        }
+
         const maxSize = 100 * 1024 * 1024; // 100MB
         if (file.size > maxSize) {
-            if (!confirm(`Die Datei ist sehr groß (${(file.size / (1024 * 1024)).toFixed(2)}MB). Das kann den Browser stark verlangsamen. Trotzdem fortfahren?`)) {
+            if (!confirm(`Die Datei ist sehr groß (${(file.size / (1024 * 1024)).toFixed(2)}MB). Fortfahren?`)) {
                 return;
             }
         }
 
-        // Typ erkennen
         const backgroundType = this._detectBackgroundType(file);
         this.currentBackgroundType = backgroundType;
 
-        // Datei speichern
-        if (typeof Nutzerspeicher !== 'undefined') {
-            if (backgroundType === 'video') {
-                Nutzerspeicher.speichereVideoAlsHintergrund(file, backgroundType);
+        // Callback-Funktion für nach dem Speichern
+        const onComplete = (success, error) => {
+            if (success) {
+                this._renderWallpaperListe();
+                this._showSuccess(`Hintergrund hochgeladen! (Typ: ${backgroundType})`);
             } else {
-                Nutzerspeicher.speichereDateiAlsHintergrund(file, backgroundType);
+                this._showError(`Fehler beim Hochladen: ${error?.message || 'Unbekannter Fehler'}`);
             }
-        }
+        };
 
-        this._showSuccess(`Hintergrund erfolgreich hochgeladen! (Typ: ${backgroundType})`);
+        if (backgroundType === 'video') {
+            Nutzerspeicher.speichereVideoAlsHintergrund(file, onComplete);
+        } else {
+            Nutzerspeicher.speichereDateiAlsHintergrund(file, backgroundType, onComplete);
+        }
     },
 
     /**
      * Erkennt den Hintergrund-Typ
-     * @param {File} file - Datei
-     * @returns {string} Typ: 'static', 'live', oder 'video'
      */
     _detectBackgroundType(file) {
         const fileName = file.name.toLowerCase();
         const fileType = file.type.toLowerCase();
 
-        // Video-Formate
         if (fileType.startsWith('video/') ||
             fileName.endsWith('.mp4') ||
             fileName.endsWith('.webm') ||
-            fileName.endsWith('.mov') ||
-            fileName.endsWith('.avi') ||
-            fileName.endsWith('.mkv')) {
+            fileName.endsWith('.mov')) {
             return 'video';
         }
 
-        // Animierte Bildformate
         if (fileType === 'image/gif' ||
-            fileType.includes('apng') ||
             fileName.endsWith('.gif') ||
             fileName.endsWith('.apng')) {
             return 'live';
-        }
-
-        // Statische Bilder
-        if (fileType.startsWith('image/')) {
-            return 'static';
         }
 
         return 'static';
     },
 
     /**
-     * Setzt den Hintergrundtyp manuell
-     * @param {string} type - 'static', 'live', oder 'video'
+     * Rendert die Wallpaper-Liste
      */
+    _renderWallpaperListe() {
+        if (typeof Nutzerspeicher === 'undefined') return;
+
+        const wallpapers = Nutzerspeicher.ladeWallpaperListe();
+        const container = document.querySelector('.Hintergrund-btn');
+
+        if (!container) return;
+
+        container.innerHTML = ''; // Container zuerst leeren
+
+        if (wallpapers.length === 0) {
+            container.innerHTML = '<p class="Hintergrund-leer">Keine Wallpapers in der Galerie</p>';
+            return;
+        }
+
+        let html = '<div class="wallpaper-gallery">';
+
+        wallpapers.forEach(wallpaper => {
+            const isCurrent = wallpaper.isCurrent;
+            const isVideo = wallpaper.type === 'video';
+
+            html += `
+                <div class="wallpaper-item ${isCurrent ? 'active' : ''}"
+                     onclick="EinstellungenHintergrund.setWallpaper('${wallpaper.id}')"
+                     title="${wallpaper.name}">
+
+                    <div class="wallpaper-thumbnail">
+                        ${isVideo ? `
+                            <video autoplay loop muted playsinline class="wallpaper-video-thumb" ${wallpaper.url.startsWith('data:') ? 'controls' : ''}>
+                                <source src="${wallpaper.url}" type="${this._getVideoMimeType(wallpaper.url)}">
+                            </video>
+                        ` : `
+                            <img src="${wallpaper.thumbnail}" alt="${wallpaper.name}" loading="lazy">
+                        `}
+                    </div>
+
+                    <div class="wallpaper-info">
+                        <span class="wallpaper-name">${wallpaper.name}</span>
+                        <span class="wallpaper-type">${this._getTypeLabel(wallpaper.type)}</span>
+                    </div>
+
+                    <div class="wallpaper-actions">
+                        <button class="wallpaper-set-btn" title="Als Hintergrund setzen">
+                            <img src="/Res/Bild/Icon/EInstellungen/Hintergrund formaten/image_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" width="18" height="18">
+                        </button>
+                        <button class="wallpaper-delete-btn"
+                                onclick="event.stopPropagation(); EinstellungenHintergrund.deleteWallpaper('${wallpaper.id}', event)"
+                                title="Löschen">
+                            <img src="/Res/Bild/Icon/Datein/Folder/delete_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" width="18" height="18">
+                        </button>
+                    </div>
+
+                    ${isCurrent ? '<div class="wallpaper-current-badge">Aktiv</div>' : ''}
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+    },
+
+    /**
+     * Setzt ein Wallpaper als Hintergrund
+     * @param {string} id - Wallpaper-ID
+     */
+    setWallpaper(id) {
+        if (typeof Nutzerspeicher !== 'undefined') {
+            Nutzerspeicher.setzeWallpaperAlsAktiv(id);
+            this._renderWallpaperListe();
+            this._showSuccess('Hintergrund geändert!');
+        }
+    },
+
+    /**
+     * Löscht ein Wallpaper
+     * @param {string} id - Wallpaper-ID
+     * @param {Event} event - Event-Objekt
+     */
+    deleteWallpaper(id, event) {
+        if (event) event.stopPropagation();
+
+        if (confirm('Möchtest du dieses Wallpaper wirklich löschen?')) {
+            if (typeof Nutzerspeicher !== 'undefined') {
+                // Speichere das Wallpaper-Objekt BEVOR es gelöscht wird
+                const wallpapersBefore = Nutzerspeicher.ladeWallpaperListe();
+                const deletedWallpaper = wallpapersBefore.find(wp => wp.id === id);
+
+                const success = Nutzerspeicher.entferneWallpaper(id);
+
+                if (success) {
+                    // Prüfe ob gelöschtes Wallpaper aktiv war
+                    const settings = Nutzerspeicher.laden();
+                    if (deletedWallpaper && deletedWallpaper.url === settings.hintergrundUrl) {
+                        // Wenn aktives Wallpaper gelöscht wurde, setze Standard
+                        if (typeof Nutzerspeicher.standardHintergrund === 'function') {
+                            Nutzerspeicher.standardHintergrund();
+                        } else {
+                            const standardUrl = '/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg';
+                            Nutzerspeicher.hintergrundSpeichern(standardUrl, 'static');
+                            Nutzerspeicher.ladeHintergrund(standardUrl, 'static');
+                        }
+                    }
+
+                    this._renderWallpaperListe();
+                    this._showSuccess('Wallpaper gelöscht!');
+                } else {
+                    this._showError('Fehler beim Löschen des Wallpapers');
+                }
+            }
+        }
+    },
+
+    /**
+     * Gibt Label für Typ zurück
+     */
+    _getTypeLabel(type) {
+        switch (type) {
+            case 'video': return 'Video';
+            case 'live': return 'Animiert';
+            default: return 'Bild';
+        }
+    },
+
+    /**
+     * Setzt den Hintergrund auf Standard zurück
+     */
+    resetHintergrund() {
+        if (typeof Nutzerspeicher !== 'undefined') {
+            const standardUrl = '/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg';
+            Nutzerspeicher.hintergrundSpeichern(standardUrl, 'static');
+            Nutzerspeicher.ladeHintergrund(standardUrl, 'static');
+            this.currentBackgroundType = 'static';
+        }
+        this._renderWallpaperListe();
+        this._showSuccess('Hintergrund auf Standard zurückgesetzt!');
+    },
+
+    /* ===== HILFSMETHODEN ===== */
+
+    /**
+     * Gibt den korrekten MIME-Type für Video-URLs zurück
+     * @param {string} url - Video-URL
+     * @returns {string} MIME-Type
+     */
+    _getVideoMimeType(url) {
+        if (url.startsWith('data:')) {
+            const match = url.match(/^data:(video\/[^;]+)/);
+            return match ? match[1] : 'video/mp4';
+        }
+        const ext = url.split('.').pop().toLowerCase();
+        const mimeTypes = {
+            mp4: 'video/mp4',
+            webm: 'video/webm',
+            mov: 'video/quicktime',
+            avi: 'video/x-msvideo',
+            mkv: 'video/x-matroska'
+        };
+        return mimeTypes[ext] || 'video/mp4';
+    },
+
+    /* ===== BESTEHENDE METHODEN ===== */
+
     setBackgroundType(type) {
-        const validTypes = ['static', 'gif', 'video'];
+        const validTypes = ['static', 'live', 'video'];
         if (validTypes.includes(type)) {
             this.currentBackgroundType = type;
             if (typeof Nutzerspeicher !== 'undefined') {
@@ -210,20 +367,6 @@ const EinstellungenHintergrund = {
         }
     },
 
-    /**
-     * Setzt den Hintergrund auf Standard zurück
-     */
-    resetHintergrund() {
-        if (typeof Nutzerspeicher !== 'undefined') {
-            Nutzerspeicher.hintergrundLöschen();
-            this.currentBackgroundType = 'static';
-        }
-        this._showSuccess('Hintergrund auf Standard zurückgesetzt!');
-    },
-
-    /**
-     * Zeigt eine Erfolgsmeldung an
-     */
     _showSuccess(message) {
         if (typeof Benachrichtigung !== 'undefined') {
             new Benachrichtigung('Hintergrund', message, '/Res/Bild/Icon/Topbar/check_circle_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg');
@@ -253,9 +396,6 @@ const EinstellungenHintergrund = {
         }
     },
 
-    /**
-     * Zeigt eine Fehlermeldung an
-     */
     _showError(message) {
         if (typeof Benachrichtigung !== 'undefined') {
             new Benachrichtigung('Fehler', message, '/Res/Bild/Icon/Topbar/error_24dp_FF0000_FILL1_wght400_GRAD0_opsz24.svg');

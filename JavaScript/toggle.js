@@ -27,6 +27,14 @@ function User_Wallpapier() {
     }
 }
 
+function openNutzer_custom() {
+    const el = document.querySelector('.Placeholder-usercustom')
+    if (el) {
+        el.classList.contains('Open') ? Sound.play('menu-close') : Sound.play('menu-open');
+        el.classList.toggle('Open')
+    }
+}
+
 function placeholder_notifield() {
     const el = document.querySelector('.Benachrichtigung-content')
     if (el) {

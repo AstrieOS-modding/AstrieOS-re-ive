@@ -8,6 +8,10 @@ body {
     cursor: default;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 .Achievement-notifications {
     position: fixed;
     right: 18px;
@@ -395,6 +399,40 @@ body {
     text-align: left;
 }
 
+.Placeholder-user-btn {
+    box-sizing: border-box;
+    white-space: nowrap;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.48);
+    transition: all 0.18s ease;
+    cursor: pointer;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+}
+
+.Placeholder-user-btn:hover {
+    background-color: rgb(255 255 255 / 0.28);
+    transition: all 0s ease;
+}
+
+.Placeholder-user-btn.aktiv {
+    background-color: rgb(255 255 255 / 0.18);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 1);
+    transition: all 0.18s ease;
+}
+
+.Placeholder-user-btn.aktiv:hover {
+    background-color: rgb(255 255 255 / 0.28);
+    transition: all 0s ease;
+}
+
 .Settings-version-check { justify-content: flex-start; }
 .Settings-version-check span { display: grid; gap: 3px; }
 .Settings-version-check small { opacity: 0.65; font-size: 0.78rem; }
@@ -478,6 +516,141 @@ body {
     background-color: rgb(0 0 0 / 0.48);
 }
 
+.Placeholder-usercustom.Open {
+    display: flex;
+}
+
+.Placeholder-usercustom {
+    position: relative;
+    overflow: hidden;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: none;
+    gap: 8px;
+    padding: 18px 18px;
+    border-radius: 14px;
+    background-image: linear-gradient(to right, #000000b0, transparent);
+    background-color: rgb(0 0 0 / 0.38);
+}
+
+.nutzerbanner-bg {
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+}
+
+.banner-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.nutzerpfp {
+    text-align: center;
+}
+
+.Custom-pfp {
+    border-radius: 14px;
+}
+
+.Custom-pfp-upload {
+    padding: 8px 18px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.48);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.Custom-pfp-upload:hover {
+    background-color: rgb( 255 255 255 / 0.28);
+    transition: all 0s ease;
+}
+
+.nutzerinfo {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.nutzerbanner {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 8px 18px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.48);
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.nutzerbanner:hover, .nutzerspeicher:hover {
+    background-color: rgb(149, 177, 255);
+    transition: all 0s ease;
+}
+
+.nutzeractions {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.nutzerspeicher {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 18px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.48);
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.nutzerwegwerfen {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 18px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.48);
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.nutzerwegwerfen:hover {
+    background-color: rgb(255, 135, 135);
+    transition: all 0s ease;
+}
+
+.custom-username::placeholder {
+    color: #ffffff84;
+}
+
+.custom-username {
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    width: 100%;
+    height: 48px;
+    padding-left: 18px;
+    border-radius: 12px;
+    background-color: rgb(0 0 0 / 0.48);
+    color: #ffffff84;
+    font-family: Google-sans;
+    font-size: 1rem;
+    transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.custom-username:focus {
+    height: 64px;
+    border-radius: 14px;
+    background-color: rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+}
+
 .Einstellungen-hintergrund-display.Open {
     display: block;
     opacity: 1;
@@ -542,6 +715,157 @@ body {
     background-color: #8585b8;
 }
 
+.Hintergrund-btn {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 8px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.38);
+    transition: all 0.18s ease;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 240px;
+}
+
+.wallpaper-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 8px;
+}
+
+.wallpaper-item {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    background-color: rgb(0 0 0 / 0.38);
+    border: 2px solid transparent;
+}
+
+.wallpaper-item:hover {
+    background-color: rgb(0 0 0 / 0.58);
+    transform: translateY(-2px);
+    border-color: rgb(255 255 255 / 0.28);
+}
+
+.wallpaper-item.active {
+    border-color: #bd82eb;
+    box-shadow: 0 0 0 2px rgba(189, 130, 235, 0.3);
+}
+
+.wallpaper-thumbnail {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(0 0 0 / 0.38);
+    overflow: hidden;
+}
+
+.wallpaper-thumbnail img,
+.wallpaper-thumbnail video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.wallpaper-video-thumb {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.wallpaper-info {
+    padding: 6px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(0 0 0 / 0.58);
+}
+
+.wallpaper-name {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    margin-right: 4px;
+}
+
+.wallpaper-type {
+    font-size: 0.7rem;
+    opacity: 0.72;
+    white-space: nowrap;
+}
+
+.wallpaper-actions {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.18s ease;
+}
+
+.wallpaper-item:hover .wallpaper-actions {
+    opacity: 1;
+}
+
+.wallpaper-actions button {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: none;
+    background-color: rgb(0 0 0 / 0.58);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.18s ease;
+    padding: 0;
+}
+
+.wallpaper-actions button:hover {
+    background-color: rgb(255 255 255 / 0.28);
+    transform: scale(1.1);
+}
+
+.wallpaper-current-badge {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    background-color: #bd82eb;
+    color: white;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+/* Scrollbar für Galerie */
+.Hintergrund-btn::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.Hintergrund-btn::-webkit-scrollbar-track {
+    background: rgb(0 0 0 / 0.28);
+    border-radius: 10px;
+}
+
+.Hintergrund-btn::-webkit-scrollbar-thumb {
+    background: rgb(255 255 255 / 0.38);
+    border-radius: 10px;
+}
+
+.Hintergrund-btn::-webkit-scrollbar-thumb:hover {
+    background: rgb(255 255 255 / 0.58);
+}
+
 .Placeholder-text-bold {
     font-weight: 500;
 }
@@ -555,7 +879,7 @@ body {
     margin-bottom: 8px;
     overflow-y: scroll;
     overflow-x: hidden;
-    height: 360px;
+    height: 480px;
     padding: 18px 18px;
     border-radius: 14px;
     background-color: rgb(0 0 0 / 0.28);
