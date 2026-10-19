@@ -2,45 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>AstrieOS - Loading</title>
     <link rel="stylesheet" href="test-ui.css">
     <link rel="stylesheet" href="/Res/Font/font.css">
 </head>
 <body>
-    <div class="wallhaven-container">
-        <div class="wallhaven-search">
-            <input type="text" class="wallhaven-input" placeholder="Suche nach Wallpapers...">
-            <button class="wallhaven-button" onclick="window.WallhavenManager._searchWallhaven()">
-                <img src="/Res/Bild/Icon/Topbar/search_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" width="24" height="24">
-                Suche
-            </button>
+    <!-- Laden-overlay -->
+    <div class="Ladenoverlay" id="LadenOverlay">
+        <div class="Ladencontent">
+            <!-- Logo Section -->
+            <div class="Ladenheader">
+                <img class="Ladenlogo" src="/Res/Bild/Logo/re-ive-logo.svg" alt="AstrieOS Logo">
+                <div class="Ladenlogo-glow"></div>
+            </div>
+            
+            <!-- Loading Spinner -->
+            <div class="Ladenspinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            
+            <!-- Progress Section -->
+            <div class="Ladenprogress">
+                <div class="Ladenbar-container">
+                    <div class="Ladenbar" id="LadenBar"></div>
+                </div>
+                <span class="Laden-percent" id="Laden-nummer">0%</span>
+            </div>
+            
+            <div class="Ladenfile-info">
+                <span class="Laden-file-icon">📁</span>
+                <span class="Laden-file" id="text-file">Initializing...</span>
+            </div>
+            
+            <!-- Info Section -->
+            <div class="Ladeninfo">
+                <div class="Laden-passion">
+                    <p>Ein passioniertes Projekt mit Liebe zum Detail</p>
+                    <img src="/Res/Bild/Icon/favorite_24dp_FEC8C8_FILL1_wght400_GRAD0_opsz24.svg" alt="Heart Icon">
+                </div>
+                <p class="tiptext">Oct-18-2026 - Development Build | Web Client</p>
+            </div>
         </div>
-        <div class="wallhaven-filters">
-            <select class="wallhaven-select" id="wallhaven-category">
-                <option value="">Alle Kategorien</option>
-                <option value="general">General</option>
-                <option value="anime">Anime</option>
-                <option value="people">People</option>
-            </select>
-            <select class="wallhaven-select" id="wallhaven-purity">
-                <option value="">Alle Reinheitsstufen</option>
-                <option value="sfw">SFW</option>
-                <option value="sketchy">Sketchy</option>
-                <option value="nsfw">NSFW</option>
-            </select>
-            <select class="wallhaven-select" id="wallhaven-resolution">
-                <option value="">Alle Auflösungen</option>
-                <option value="1920x1080">1920x1080</option>
-                <option value="2560x1440">2560x1440</option>
-                <option value="3840x2160">3840x2160</option>
-            </select>
-        </div>
-        <div class="wallhaven-results" id="wallhaven-results">
-            <p class="wallhaven-empty">Suche nach Wallpapers, um Ergebnisse zu sehen</p>
-        </div>
-        <div class="wallhaven-pagination" id="wallhaven-pagination"></div>
     </div>
+    
     <script src="/JavaScript/Einstellungen.js"></script>
     <script src="/JavaScript/ui.js"></script>
+    <script>
+        // Lade-Overlay Animationen
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlay = document.getElementById('LadenOverlay');
+            const progressBar = document.getElementById('LadenBar');
+            const percentText = document.getElementById('Laden-nummer');
+            const fileText = document.getElementById('text-file');
+            
+            // Simuliere Ladefortschritt (kann durch echtes Laden ersetzt werden)
+            let progress = 0;
+            const files = ['Initializing core...', 'Loading assets...', 'Preparing UI...', 'Finalizing...'];
+            let currentFile = 0;
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 8;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // Fertig-Animation
+                    setTimeout(() => {
+                        overlay.classList.add('fertig');
+                    }, 500);
+                }
+                
+                progressBar.style.width = `${progress}%`;
+                percentText.textContent = `${Math.floor(progress)}%`;
+                
+                // Dateinamen rotieren
+                if (progress > currentFile * 25 && currentFile < files.length - 1) {
+                    currentFile++;
+                    fileText.textContent = files[currentFile];
+                }
+            }, 150 + Math.random() * 100);
+        });
+    </script>
 </body>
 </html>

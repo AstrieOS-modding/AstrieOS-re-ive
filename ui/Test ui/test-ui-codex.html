@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#090810">
+    <title>AstrieOS – Wird geladen</title>
+    <link rel="stylesheet" href="test-ui-codex.css">
+    <link rel="stylesheet" href="/Res/Font/font.css">
+</head>
+<body>
+    <div class="Ladenoverlay" role="status" aria-live="polite" aria-label="AstrieOS wird geladen">
+        <div class="Laden-orbit Laden-orbit-a" aria-hidden="true"></div>
+        <div class="Laden-orbit Laden-orbit-b" aria-hidden="true"></div>
+
+        <main class="Ladencontent">
+            <header class="Ladenheader">
+                <div class="Laden-mark">
+                    <img class="Ladenlogo" src="/Res/Bild/Logo/re-ive-logo.svg" alt="AstrieOS">
+                </div>
+                <span class="Laden-kicker"><span class="Laden-statuspunkt"></span> ASTRIEOS · WEB CLIENT</span>
+                <h1>Dein Raum entsteht.</h1>
+                <p class="Laden-subtitle">Einen Augenblick bitte – wir machen alles bereit.</p>
+            </header>
+
+            <section class="Laden-progress" aria-label="Ladefortschritt">
+                <div class="Laden-progress-meta">
+                    <span class="Laden-datei-label">WIRD GELADEN</span>
+                    <span id="Laden-nummer">0%</span>
+                </div>
+                <div class="Laden-track" aria-hidden="true"><span class="Laden-track-fill"></span></div>
+                <div class="Laden-file-row">
+                    <span class="Laden-file-icon" aria-hidden="true">↳</span>
+                    <span class="Laden-file" id="text-file">nichts_zutun.html</span>
+                    <span class="Laden-sync" aria-hidden="true"></span>
+                </div>
+            </section>
+
+            <footer class="Ladentext">
+                <div class="Laden-passion"><span>Mit Liebe gebaut</span><img src="/Res/Bild/Icon/favorite_24dp_FEC8C8_FILL1_wght400_GRAD0_opsz24.svg" alt=""></div>
+                <p class="tiptext">AstrieOS · Ein kleines Projekt mit großen Ideen</p>
+            </footer>
+        </main>
+
+        <div class="Laden-corner" aria-hidden="true">A<span>·</span>OS</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,116 @@
+body {
+    padding: 0;
+    margin: 0;
+    color: #ffffff;
+    -webkit-tap-highlight-color: transparent;
+    font-family: Google-sans;
+    font-size: 1rem;
+    cursor: default;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.Ladenoverlay {
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: linear-gradient(28deg, #e0a0ff, #000000);
+    color: #ffffff;
+    z-index: 10000000;
+    pointer-events: all;
+}
+
+.Ladenlinie {
+    width: 2px;
+    height: 180px;
+    border-radius: 14px;
+    background-color: #ffffff8f;
+}
+
+.Ladencontent {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.Ladenlogo {
+    width: 460.8px;
+}
+
+.Ladenheader {
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 0.4;
+    animation: Coolheader 0.7s;
+}
+
+@keyframes Coolheader {
+    0% { opacity: 0; filter: blur(8px); color: #e0a0ff; transform: translateY(14px); }
+    100% { opacity: 1; filter: blur(0px); color: #ffffff; transform: translateY(0x); }
+}
+
+.Ladenlivetracken {
+    font-weight: 600;
+    font-size: 1.35rem;
+}
+
+.Laden-file {
+    opacity: 0.4;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.Ladentext {
+    white-space: nowrap;
+}
+
+.Laden-passion {
+    display: flex;
+    gap: 8px;
+    align-content: center;
+    justify-content: center;
+    line-height: 0;
+}
+
+.tiptext {
+    line-height: 0;
+    opacity: 0.4;
+}
+
+.Ladenoverlay.fertig {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+@media (max-width: 768px) {
+    .Ladenoverlay {
+        background-image: linear-gradient(#e0a0ff 8%, #000000 100%);
+    }
+
+    .Ladencontent {
+        display: grid;
+        text-align: center;
+    }
+
+    .Ladenlinie {
+        display: none;
+    }
+
+    .Ladentext {
+        white-space: normal;
+    }
+
+    .Laden-passion {
+        line-height: 1;
+    }
+}

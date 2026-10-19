@@ -1,0 +1,166 @@
+:root {
+    color-scheme: dark;
+    --Laden-violet: #b28aff;
+    --Laden-pink: #efa8dc;
+    --Laden-muted: #a6a1b4;
+}
+
+* { box-sizing: border-box; }
+
+html, body { min-width: 320px; min-height: 100%; }
+
+body {
+    margin: 0;
+    font-family: Google-sans, Inter, system-ui, sans-serif;
+    background: #090810;
+    cursor: default;
+}
+
+.Ladenoverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000000;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding: 28px;
+    color: #f8f5ff;
+    background:
+        radial-gradient(ellipse at 50% 44%, rgb(100 60 148 / 18%), transparent 42%),
+        radial-gradient(ellipse at 8% 100%, rgb(90 54 137 / 13%), transparent 44%),
+        #090810;
+    transition: opacity 320ms ease, visibility 320ms ease;
+}
+
+.Ladenoverlay::before {
+    position: absolute;
+    inset: 0;
+    content: "";
+    opacity: .18;
+    pointer-events: none;
+    background-image: radial-gradient(rgb(255 255 255 / 35%) .7px, transparent .7px);
+    background-size: 26px 26px;
+    mask-image: linear-gradient(transparent, #000 30%, #000 70%, transparent);
+}
+
+.Ladencontent {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 480px);
+    padding: 48px 46px 30px;
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: 24px;
+    background: linear-gradient(145deg, rgb(30 26 42 / 88%), rgb(17 15 25 / 94%));
+    box-shadow: 0 32px 100px rgb(0 0 0 / 48%), inset 0 1px rgb(255 255 255 / 6%);
+    text-align: center;
+    backdrop-filter: blur(24px);
+    animation: Laden-auftauchen 700ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.Ladenheader { display: flex; flex-direction: column; align-items: center; }
+
+.Laden-mark {
+    display: grid;
+    width: 78px;
+    height: 78px;
+    margin-bottom: 23px;
+    place-items: center;
+    border: 1px solid rgb(205 170 255 / 25%);
+    border-radius: 23px;
+    background: linear-gradient(145deg, rgb(183 139 255 / 18%), rgb(239 168 220 / 6%));
+    box-shadow: 0 0 42px rgb(170 119 255 / 16%), inset 0 1px rgb(255 255 255 / 12%);
+}
+
+.Ladenlogo { display: block; width: 47px; height: 47px; object-fit: contain; }
+
+.Laden-kicker {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #c8b5e7;
+    font-size: .67rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+}
+
+.Laden-statuspunkt {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #b79aff;
+    box-shadow: 0 0 12px #b79aff;
+    animation: Laden-puls 1.8s ease-in-out infinite;
+}
+
+.Ladenheader h1 {
+    margin: 17px 0 8px;
+    font-size: clamp(1.65rem, 6vw, 2.05rem);
+    font-weight: 600;
+    letter-spacing: -.045em;
+}
+
+.Laden-subtitle { margin: 0; color: var(--Laden-muted); font-size: .91rem; line-height: 1.55; }
+
+.Laden-progress {
+    margin-top: 35px;
+    padding: 19px 18px 14px;
+    border: 1px solid rgb(255 255 255 / 7%);
+    border-radius: 15px;
+    background: rgb(7 6 12 / 32%);
+    text-align: left;
+}
+
+.Laden-progress-meta { display: flex; align-items: center; justify-content: space-between; }
+.Laden-datei-label { color: #9c95aa; font-size: .64rem; font-weight: 700; letter-spacing: .14em; }
+#Laden-nummer { color: #e2d3ff; font-size: .85rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+
+.Laden-track {
+    height: 5px;
+    margin: 12px 0 13px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: rgb(255 255 255 / 9%);
+}
+
+.Laden-track-fill {
+    display: block;
+    width: 36%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--Laden-violet), var(--Laden-pink));
+    box-shadow: 0 0 14px rgb(194 148 255 / 48%);
+    animation: Laden-fortschritt 2.4s ease-in-out infinite;
+}
+
+.Laden-file-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.Laden-file-icon { color: #bb9af3; font-size: 1rem; }
+.Laden-file { overflow: hidden; color: #b1aabd; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .72rem; text-overflow: ellipsis; white-space: nowrap; }
+.Laden-sync { width: 6px; height: 6px; margin-left: auto; flex: 0 0 auto; border-radius: 50%; background: #9e83d0; opacity: .8; }
+
+.Ladentext { margin-top: 26px; }
+.Laden-passion { display: flex; align-items: center; justify-content: center; gap: 7px; color: #d6cddd; font-size: .79rem; }
+.Laden-passion img { width: 15px; height: 15px; }
+.tiptext { margin: 8px 0 0; color: #777183; font-size: .69rem; }
+
+.Laden-orbit { position: absolute; width: 570px; height: 570px; border: 1px solid rgb(190 151 255 / 5%); border-radius: 50%; pointer-events: none; }
+.Laden-orbit-a { transform: scaleY(.52) rotate(-22deg); }
+.Laden-orbit-b { width: 790px; height: 790px; transform: scaleY(.52) rotate(34deg); border-color: rgb(239 168 220 / 4%); }
+.Laden-corner { position: absolute; right: 28px; bottom: 22px; color: #7a7387; font-size: .72rem; font-weight: 700; letter-spacing: .13em; }
+.Laden-corner span { padding: 0 4px; color: #b28aff; }
+
+.Ladenoverlay.fertig { visibility: hidden; opacity: 0; pointer-events: none; }
+
+@keyframes Laden-auftauchen { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes Laden-puls { 50% { opacity: .4; box-shadow: 0 0 4px #b79aff; } }
+@keyframes Laden-fortschritt { 0% { width: 12%; transform: translateX(-35%); } 55% { width: 58%; } 100% { width: 28%; transform: translateX(250%); } }
+
+@media (max-width: 520px) {
+    .Ladenoverlay { padding: 20px; }
+    .Ladencontent { padding: 38px 24px 25px; border-radius: 21px; }
+    .Laden-progress { margin-top: 29px; padding-inline: 14px; }
+    .Laden-corner { right: 18px; bottom: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}

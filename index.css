@@ -66,22 +66,35 @@ body {
 .Ladenoverlay {
     top: 0;
     left: 0;
+    right: 0;
     width: 100%;
     height: 100%;
     position: fixed;
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
     min-height: 100vh;
-    background-image: linear-gradient(24deg, #e0a0ff, #000000);
+    background-image: linear-gradient(28deg, #e0a0ff, #000000);
     color: #ffffff;
     z-index: 10000000;
     pointer-events: all;
 }
 
+.Ladenlinie {
+    width: 2px;
+    height: 180px;
+    border-radius: 14px;
+    background-color: #ffffff8f;
+}
+
+.Ladencontent {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
 .Ladenlogo {
-    width: 512px;
+    width: 460.8px;
 }
 
 .Ladenheader {
@@ -92,8 +105,8 @@ body {
 }
 
 @keyframes Coolheader {
-    0% { opacity: 0; color: #e0a0ff; transform: translateY(14px); }
-    100% { opacity: 1; color: #ffffff; transform: translateY(0px); }
+    0% { opacity: 0; filter: blur(8px); color: #e0a0ff; transform: translateY(14px); }
+    100% { opacity: 1; filter: blur(0px); color: #ffffff; transform: translateY(0x); }
 }
 
 .Ladenlivetracken {
@@ -105,6 +118,10 @@ body {
     opacity: 0.4;
     font-size: 1rem;
     font-weight: 400;
+}
+
+.Ladentext {
+    white-space: nowrap;
 }
 
 .Laden-passion {
@@ -185,7 +202,8 @@ body {
     align-content: center;
     gap: 8px;
     top: 14px;
-    left: 14px;
+    left: 0;
+    right: 0;
     z-index: 100000;
 }
 
