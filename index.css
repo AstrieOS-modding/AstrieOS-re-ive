@@ -8,6 +8,55 @@ body {
     cursor: default;
 }
 
+:root {
+    --material-you-accent: #bd82eb;
+    --material-you-light: #e2b7ff;
+    --material-you-light-text: #321a42;
+    --material-you-dark: #694785;
+    --material-you-dark-text: #ffffff;
+}
+
+.material-you-enabled .Topbar-content,
+.material-you-enabled .Taskbar-content {
+    background-color: color-mix(in srgb, var(--material-you-dark) 84%, transparent);
+}
+
+.material-you-enabled .Placeholder-dashboard,
+.material-you-enabled .Placeholder-btn,
+.material-you-enabled .Placeholder-user-btn,
+.material-you-enabled .Einstellungen-scroll,
+.material-you-enabled .Einstellungen-hintergrund-display,
+.material-you-enabled .Benachrichtigung-content {
+    background-color: color-mix(in srgb, var(--material-you-dark) 88%, transparent);
+    color: var(--material-you-dark-text);
+}
+
+.material-you-enabled .Placeholder-btn:hover,
+.material-you-enabled .Placeholder-close:hover {
+    background-color: var(--material-you-light);
+    color: var(--material-you-light-text);
+}
+
+.material-you-enabled .Settings-update-button,
+.material-you-enabled .Release-toast-action {
+    background-color: var(--material-you-accent);
+}
+
+.material-you-enabled .Placeholder-user-btn.aktiv {
+    box-shadow: 0 0 0 2px var(--material-you-light);
+}
+
+.material-you-enabled .Taskbar-app:hover,
+.material-you-enabled .Topbar-btn:hover,
+.material-you-enabled .Nutzerui:hover {
+    background-color: var(--material-you-light);
+    color: var(--material-you-light-text);
+}
+
+.Materialyou-toggle[aria-pressed="true"] {
+    box-shadow: inset 0 0 0 1px var(--material-you-accent);
+}
+
 ::-webkit-scrollbar {
     display: none;
 }
@@ -202,8 +251,7 @@ body {
     align-content: center;
     gap: 8px;
     top: 14px;
-    left: 0;
-    right: 0;
+    left: 14px;
     z-index: 100000;
 }
 
@@ -643,11 +691,13 @@ body {
     transition: all 0s ease;
 }
 
-.custom-username::placeholder {
+.custom-username::placeholder, .custom-passwort::placeholder {
     color: #ffffff84;
 }
 
-.custom-username {
+.custom-username, .custom-passwort {
+    margin-top: 4px;
+    margin-bottom: 4px;
     border: none;
     outline: none;
     box-sizing: border-box;
@@ -662,11 +712,20 @@ body {
     transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.custom-username:focus {
+.custom-username:focus, .custom-passwort:focus {
     height: 64px;
     border-radius: 14px;
     background-color: rgba(255, 255, 255, 0.28);
     color: #ffffff;
+}
+
+.Custom-passwort-entfernen {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 8px;
+    font-size: 0.85rem;
+    opacity: 0.8;
 }
 
 .Einstellungen-hintergrund-display.Open {

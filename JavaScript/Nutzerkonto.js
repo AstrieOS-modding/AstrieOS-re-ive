@@ -324,6 +324,8 @@ const Nutzerkonto = {
      */
     async speichereBenutzerdaten() {
         const usernameInput = this.userCenterElement.querySelector('.custom-username');
+        const passwordInput = this.userCenterElement.querySelector('.custom-passwort');
+        const removePassword = this.userCenterElement.querySelector('.custom-passwort-entfernen');
         const username = usernameInput ? usernameInput.value.trim() : 'Gast!';
 
         // Lade aktuelle Benutzerdaten
@@ -344,6 +346,18 @@ const Nutzerkonto = {
             Nutzerspeicher.aktualisiereKonto(Nutzerspeicher.getAktiveKontoId(), {
                 username: username
             });
+
+            const password = passwordInput?.value || '';
+            if (removePassword?.checked || password) {
+                try {
+                    await Nutzerspeicher.setKontoPasswort(aktivesKonto.id, removePassword.checked ? '' : password);
+                    if (passwordInput) passwordInput.value = '';
+                    if (removePassword) removePassword.checked = false;
+                } catch (error) {
+                    await Popup.alert(error.message || 'Das Passwort konnte nicht gespeichert werden.', { title: 'Passwort nicht gespeichert', type: 'error' });
+                    return;
+                }
+            }
             
             // Aktualisiere UI
             this.aktualisiereKontoDashboard();
@@ -433,6 +447,10 @@ const Nutzerkonto = {
             usernameInput.value = aktivesKonto.username;
             usernameInput.placeholder = 'Benutzername eingeben...';
         }
+        const passwordInput = this.userCenterElement.querySelector('.custom-passwort');
+        if (passwordInput) passwordInput.value = '';
+        const removePassword = this.userCenterElement.querySelector('.custom-passwort-entfernen');
+        if (removePassword) removePassword.checked = false;
 
         // PFP - Custom-Bereich und Topbar
         const pfpImg = this.userCenterElement.querySelector('.Custom-pfp');

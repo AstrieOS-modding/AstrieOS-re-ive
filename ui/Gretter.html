@@ -1,0 +1,34 @@
+<template id="Nutzer_gretterui">
+    <div class="Gretter-ui">
+        <div class="Gretter-content">
+            <div class="Gretter-overlay">
+                <div class="Gretter-bg-effekt">
+                    <img class="Gretter-bg" src="/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg">
+                </div>
+            </div>
+            <div class="Gretter-uhr">
+                <span class="Uhr-zeigen">00:00:00 Uhr</span>
+                <p class="Gretter-uhr-zeigen"> ---> [<span class="Datum-zeigen">Montag, 8 Okt, 2026</span>] <--- </p>
+                <form class="Gretter-passwort" data-gretter-login-form>
+                    <input class="Input-passwort" type="password" autocomplete="current-password" placeholder="Passwort eingeben" aria-label="Kontopasswort">
+                    <button class="Gretter-login" type="submit">Starten!?!?!</button>
+                    <p class="Gretter-fehler" data-gretter-error role="status" aria-live="polite"></p>
+                </form>
+                <div class="Gretter-dropdown">
+                    <button type="button" onclick="Gretter_user()" class="Gretter-btn" data-gretter-selected-account>
+                        <img width="48" height="48" src="/Res/Bild/Logo/AddText_07-03-07.27.32.png" class="Gretter-user-pfp">
+                        <p><span class="username">Gast!</span></p>
+                    </button>
+                    <button type="button" onclick="Gretter_De()" class="Gretter-btn">
+                        <img width="32" height="32" src="/Res/Bild/Icon/Gretter/desktop_windows_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
+                        <p><span class="Desktop-manager">Re-ive!</span></p>
+                    </button>
+                </div>
+                <div class="Gretter-background" data-gretter-menu="accounts" aria-label="Konten"></div>
+                <div class="Gretter-background" data-gretter-menu="desktop" aria-label="Desktop-Manager">
+                    <button type="button" class="Gretter-dropdown-btn" data-desktop-manager="re-ive">Re-ive!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

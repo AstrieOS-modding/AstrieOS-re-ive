@@ -1,3 +1,19 @@
+function Gretter_user() {
+    const el = document.querySelector('[data-gretter-menu="accounts"]') || document.querySelector('.Gretter-background')
+    if (el) {
+        el.classList.toggle('Open');
+        document.querySelector('[data-gretter-menu="desktop"]')?.classList.remove('Open');
+    }
+}
+
+function Gretter_De() {
+    const el = document.querySelector('[data-gretter-menu="desktop"]') || document.querySelector('.Gretter-background')
+    if (el) {
+        el.classList.toggle('Open');
+        document.querySelector('[data-gretter-menu="accounts"]')?.classList.remove('Open');
+    }
+}
+
 function placeholder_user() {
     const el = document.querySelector('.PLaceholder-nutzercenter')
     if (el) {

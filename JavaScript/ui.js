@@ -35,6 +35,27 @@ function updateErfolgenUI(status) {
 
 UserStatus.subscribe(updateErfolgenUI);
 
+fetch('/ui/Gretter.html')
+    .then(res => {
+        if (!res.ok) throw new Error(`Greeter konnte nicht geladen werden (${res.status}).`);
+        return res.text();
+    })
+    .then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const template = doc.querySelector('#Nutzer_gretterui');
+        if (!template) throw new Error('Greeter-Template wurde nicht gefunden.');
+        document.body.appendChild(template.content.cloneNode(true));
+        if (!document.querySelector('link[data-gretter-styles]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = '/ui/Ui_css/Gretter.css';
+            link.dataset.gretterStyles = 'true';
+            document.head.appendChild(link);
+        }
+        document.dispatchEvent(new Event('gretter-template-ready'));
+    })
+    .catch(error => console.error('[Greeter]', error));
+
 fetch('/ui/Nutzercenter.html')
   .then(res => res.text())
   .then(html => {

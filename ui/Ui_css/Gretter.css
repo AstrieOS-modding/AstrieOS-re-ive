@@ -1,0 +1,204 @@
+.Gretter-ui.fertig {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.Gretter-ui {
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #ffffff;
+    z-index: 10000000;
+    pointer-events: all;
+    transition: all 0.18s ease;
+}
+
+.Gretter-content {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0000003d;
+}
+
+.Gretter-overlay {
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 0;
+    filter: blur(8px);
+}
+
+.Gretter-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.Gretter-bg-video { display: block; }
+
+.Gretter-uhr {
+    position: relative;
+    z-index: 1;
+    width: min(520px, calc(100vw - 32px));
+    white-space: normal;
+    font-size: 4rem;
+    font-weight: 500;
+    text-align: center;
+    line-height: 0.4;
+}
+
+.Gretter-uhr-zeigen {
+    font-size: 2rem;
+    font-weight: 400;
+}
+
+.Input-passwort {
+    box-sizing: border-box;
+    height: 48px;
+    width: 100%;
+    outline: none;
+    border: none;
+    box-shadow: 0 0 0 2px #684380;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 14px;
+    font-family: Google-sans;
+    font-size: 1rem;
+    transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.Gretter-passwort {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+}
+
+.Gretter-login {
+    min-width: 110px;
+    border: 0;
+    border-radius: 14px;
+    padding: 0 20px;
+    background: rgb(0 0 0 / 0.58);
+    color: inherit;
+    font: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.Gretter-fehler {
+    grid-column: 1 / -1;
+    min-height: 1.2em;
+    margin: 0;
+    font-size: 0.9rem;
+    color: #ffd2d2;
+}
+
+.Input-passwort:focus {
+    height: 68px;
+}
+
+.Gretter-dropdown {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 8px;
+}
+
+.Gretter-btn, .Gretter-dropdown-btn {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 8px;
+    border-radius: 14px;
+    background-color: #0000006b;
+    font-size: 1rem;
+    font-weight: 400;
+    transition: all 0.18s ease;
+    border: 0;
+    color: inherit;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.Gretter-dropdown-btn { min-height: 56px; }
+
+.Gretter-user-pfp {
+    border-radius: 14px;
+}
+
+.Gretter-btn:hover, .Gretter-dropdown-btn:hover {
+    transition: all 0s ease;
+    background-color: rgb(255 255 255 / 0.25);
+}
+
+.Gretter-background.Open {
+    display: flex;
+}
+
+.Gretter-background {
+    display: none;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    max-height: min(36vh, 280px);
+    overflow: auto;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 8px;
+    border-radius: 14px;
+    background-color: #0000006b;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.Gretter-dropdown-btn.aktiv {
+    box-shadow: inset 0 0 0 2px var(--material-you-light, #bd82eb);
+}
+
+.Gretter-dropdown-btn small {
+    margin-left: auto;
+    opacity: 0.7;
+}
+
+.material-you-enabled .Gretter-btn,
+.material-you-enabled .Gretter-dropdown-btn,
+.material-you-enabled .Gretter-login {
+    background-color: color-mix(in srgb, var(--material-you-dark) 84%, transparent);
+    color: var(--material-you-dark-text);
+}
+
+.material-you-enabled .Gretter-btn:hover,
+.material-you-enabled .Gretter-dropdown-btn:hover,
+.material-you-enabled .Gretter-login:hover {
+    background-color: var(--material-you-light);
+    color: var(--material-you-light-text);
+}
+
+@media (max-width: 560px) {
+    .Gretter-uhr { font-size: 2.8rem; }
+    .Gretter-uhr-zeigen { font-size: 1.2rem; }
+    .Gretter-dropdown { flex-direction: column; }
+    .Gretter-passwort { grid-template-columns: 1fr; }
+    .Gretter-login { min-height: 48px; }
+}

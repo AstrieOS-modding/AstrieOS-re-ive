@@ -62,6 +62,8 @@ const EinstellungenHintergrund = {
      * Initialisiert die Hintergrund-Einstellungen
      */
     init() {
+        this._attachMaterialYouControls();
+        document.addEventListener('settings-template-ready', () => this._attachMaterialYouControls(), { once: true });
         if (this.initialized) {
             this._renderWallpaperListe();
             return;
@@ -73,6 +75,25 @@ const EinstellungenHintergrund = {
         this._renderWallpaperListe(); // Liste beim Start anzeigen
 
         console.log('[EinstellungenHintergrund] Initialisiert');
+    },
+
+    _attachMaterialYouControls() {
+        const button = document.getElementById('Materialyou-toggle');
+        if (!button || button.dataset.bound) return;
+        button.dataset.bound = 'true';
+        const render = () => {
+            if (typeof Nutzerspeicher === 'undefined') return;
+            const enabled = Boolean(Nutzerspeicher.laden().materialYouEnabled);
+            const status = document.getElementById('Materialyou');
+            if (status) status.textContent = enabled ? 'An' : 'Aus';
+            button.setAttribute('aria-pressed', String(enabled));
+        };
+        button.addEventListener('click', () => {
+            if (typeof Nutzerspeicher === 'undefined') return;
+            Nutzerspeicher.setMaterialYouEnabled(!Nutzerspeicher.laden().materialYouEnabled);
+            render();
+        });
+        render();
     },
 
     /**
@@ -394,6 +415,7 @@ const EinstellungenHintergrund = {
             const standardUrl = '/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg';
             Nutzerspeicher.hintergrundSpeichern(standardUrl, 'static');
             Nutzerspeicher.ladeHintergrund(standardUrl, 'static');
+            Nutzerspeicher.syncMaterialYou();
             this.currentBackgroundType = 'static';
         }
         this._renderWallpaperListe();

@@ -8,6 +8,8 @@ const Nutzerspeicher = {
     _wallpaperDatabasePromise: null,
     _wallpaperStorageReady: null,
     _wallpaperObjectUrls: new Map(),
+    _materialYouSyncId: 0,
+    MATERIAL_YOU_DEFAULT: '#bd82eb',
 
     /**
      * Initialisiert das Nutzerspeicher-System
@@ -27,7 +29,10 @@ const Nutzerspeicher = {
                     console.error('[Nutzerspeicher] Gespeicherter Hintergrund konnte nicht wiederhergestellt werden:', restoreError);
                 });
             })
-            .then(() => true);
+            .then(() => {
+                this.syncMaterialYou();
+                return true;
+            });
 
         console.log('[Nutzerspeicher] Initialisiert. Einstellungen:', settings);
     },
@@ -100,6 +105,93 @@ const Nutzerspeicher = {
         }
     },
 
+    setMaterialYouEnabled(enabled) {
+        const settings = this.laden();
+        settings.materialYouEnabled = Boolean(enabled);
+        this.speichern(settings);
+        this.syncMaterialYou();
+        return settings.materialYouEnabled;
+    },
+
+    syncMaterialYou() {
+        const syncId = ++this._materialYouSyncId;
+        const settings = this.laden();
+        const enabled = Boolean(settings.materialYouEnabled);
+        document.documentElement.classList.toggle('material-you-enabled', enabled);
+        if (!enabled) return;
+
+        const applyPalette = palette => {
+            const root = document.documentElement;
+            root.style.setProperty('--material-you-light', palette.light);
+            root.style.setProperty('--material-you-light-text', palette.lightText);
+            root.style.setProperty('--material-you-dark', palette.dark);
+            root.style.setProperty('--material-you-dark-text', palette.darkText);
+            root.style.setProperty('--material-you-accent', palette.light);
+        };
+        applyPalette(settings.materialYouPalette || this._createMaterialYouPalette(settings.materialYouColor || this.MATERIAL_YOU_DEFAULT));
+
+        const background = this.hintergrundLaden();
+        if (background.type === 'video') return;
+        const source = background.url || '/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg';
+        this.resolveWallpaperUrl(source).then(url => {
+            const image = new Image();
+            image.onload = () => {
+                try {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = canvas.height = 32;
+                    const context = canvas.getContext('2d', { willReadFrequently: true });
+                    context.drawImage(image, 0, 0, 32, 32);
+                    const pixels = context.getImageData(0, 0, 32, 32).data;
+                    let red = 0, green = 0, blue = 0, weightTotal = 0;
+                    for (let i = 0; i < pixels.length; i += 16) {
+                        const saturation = Math.max(pixels[i], pixels[i + 1], pixels[i + 2]) - Math.min(pixels[i], pixels[i + 1], pixels[i + 2]);
+                        if (pixels[i + 3] < 180) continue;
+                        const weight = 0.25 + Math.min(saturation / 100, 1);
+                        red += pixels[i] * weight; green += pixels[i + 1] * weight; blue += pixels[i + 2] * weight; weightTotal += weight;
+                    }
+                    if (!weightTotal) return;
+                    const color = `#${[red, green, blue].map(value => Math.round(value / weightTotal).toString(16).padStart(2, '0')).join('')}`;
+                    const latest = this.laden();
+                    if (!latest.materialYouEnabled || syncId !== this._materialYouSyncId) return;
+                    latest.materialYouColor = color;
+                    latest.materialYouPalette = this._createMaterialYouPalette(color);
+                    this.speichern(latest);
+                    applyPalette(latest.materialYouPalette);
+                } catch (error) {
+                    console.info('[Nutzerspeicher] Hintergrundfarbe nicht auslesbar; Akzentfarbe bleibt erhalten.', error);
+                }
+            };
+            image.src = url;
+        }).catch(() => {});
+    },
+
+    _createMaterialYouPalette(hex) {
+        const value = hex.replace('#', '');
+        const red = parseInt(value.slice(0, 2), 16) / 255;
+        const green = parseInt(value.slice(2, 4), 16) / 255;
+        const blue = parseInt(value.slice(4, 6), 16) / 255;
+        const max = Math.max(red, green, blue), min = Math.min(red, green, blue);
+        const delta = max - min;
+        let hue = 0;
+        if (delta) {
+            if (max === red) hue = ((green - blue) / delta) % 6;
+            else if (max === green) hue = (blue - red) / delta + 2;
+            else hue = (red - green) / delta + 4;
+        }
+        hue = (hue * 60 + 360) % 360;
+        const measuredSaturation = delta === 0 ? 0 : delta / (1 - Math.abs(2 * ((max + min) / 2) - 1));
+        const saturation = Math.max(0.48, Math.min(0.78, measuredSaturation || 0.58));
+        const toHex = lightness => {
+            const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
+            const section = hue / 60;
+            const x = chroma * (1 - Math.abs(section % 2 - 1));
+            const [r, g, b] = section < 1 ? [chroma, x, 0] : section < 2 ? [x, chroma, 0] : section < 3 ? [0, chroma, x] : section < 4 ? [0, x, chroma] : section < 5 ? [x, 0, chroma] : [chroma, 0, x];
+            const match = lightness - chroma / 2;
+            return `#${[r, g, b].map(channel => Math.round((channel + match) * 255).toString(16).padStart(2, '0')).join('')}`;
+        };
+        return { light: toHex(0.76), lightText: toHex(0.20), dark: toHex(0.40), darkText: toHex(0.96) };
+    },
+
     /**
      * Speichert spezifische Hintergrund-URL mit Typ
      */
@@ -122,8 +214,11 @@ const Nutzerspeicher = {
      */
     hintergrundLaden() {
         const einstellungen = this.laden();
+        const wallpaper = einstellungen.hintergrundWallpaperId
+            ? this.ladeWallpaperListe().find(item => item.id === einstellungen.hintergrundWallpaperId)
+            : null;
         return {
-            url: einstellungen.hintergrundUrl || null,
+            url: einstellungen.hintergrundUrl || wallpaper?.url || null,
             wallpaperId: einstellungen.hintergrundWallpaperId || null,
             type: einstellungen.backgroundType || 'static'
         };
@@ -141,6 +236,7 @@ const Nutzerspeicher = {
 
         const standardUrl = '/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg';
         this.ladeHintergrund(standardUrl, 'static');
+        this.syncMaterialYou();
     },
 
     /**
@@ -209,6 +305,8 @@ const Nutzerspeicher = {
                 imgElement.src = '/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg';
             };
         }
+        window.dispatchEvent(new CustomEvent('astrie-background-changed', { detail: { url, type } }));
+        this.syncMaterialYou();
     },
 
     /* ===== NEUE METHODEN FÜR WALLPAPER-LISTE ===== */
@@ -338,6 +436,7 @@ const Nutzerspeicher = {
             return false;
         }
         this.ladeHintergrund(resolvedUrl, wallpaper.type);
+        this.syncMaterialYou();
 
         return true;
     },
@@ -489,8 +588,10 @@ const Nutzerspeicher = {
         try {
             localStorage.setItem(this.ACCOUNTS_KEY, JSON.stringify(konten));
             console.log('[Nutzerspeicher] Konten gespeichert:', konten.length);
+            return true;
         } catch (error) {
             console.error('[Nutzerspeicher] Fehler beim Speichern der Konten:', error);
+            return false;
         }
     },
 
@@ -544,6 +645,51 @@ const Nutzerspeicher = {
         
         const konten = this.getAlleKonten();
         return konten.find(k => k.id === kontoId) || null;
+    },
+
+    kontoHatPasswort(kontoId) {
+        return Boolean(this.getAlleKonten().find(konto => konto.id === kontoId)?.passwordHash);
+    },
+
+    async setKontoPasswort(kontoId, password) {
+        const konten = this.getAlleKonten();
+        const konto = konten.find(item => item.id === kontoId);
+        if (!konto) return false;
+
+        if (!password) {
+            delete konto.passwordHash;
+            delete konto.passwordSalt;
+        } else {
+            if (!window.crypto?.subtle || !window.crypto.getRandomValues) {
+                throw new Error('Sichere Passwortspeicherung wird von diesem Browser nicht unterstützt.');
+            }
+            const saltBytes = window.crypto.getRandomValues(new Uint8Array(16));
+            const salt = Array.from(saltBytes, byte => byte.toString(16).padStart(2, '0')).join('');
+            konto.passwordSalt = salt;
+            konto.passwordHash = await this._derivePasswordHash(password, saltBytes);
+        }
+
+        return this._speichereKonten(konten) !== false;
+    },
+
+    async verifiziereKontoPasswort(kontoId, password) {
+        const konto = this.getAlleKonten().find(item => item.id === kontoId);
+        if (!konto) return false;
+        if (!konto.passwordHash) return true;
+        if (!window.crypto?.subtle) return false;
+        const saltBytes = new Uint8Array((konto.passwordSalt || '').match(/.{1,2}/g)?.map(byte => parseInt(byte, 16)) || []);
+        const hash = await this._derivePasswordHash(password, saltBytes);
+        return hash === konto.passwordHash;
+    },
+
+    async _derivePasswordHash(password, saltBytes) {
+        const key = await window.crypto.subtle.importKey(
+            'raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']
+        );
+        const bits = await window.crypto.subtle.deriveBits({
+            name: 'PBKDF2', salt: saltBytes, iterations: 120000, hash: 'SHA-256'
+        }, key, 256);
+        return Array.from(new Uint8Array(bits), byte => byte.toString(16).padStart(2, '0')).join('');
     },
 
     /**
@@ -633,6 +779,7 @@ const Nutzerspeicher = {
         
         this.setAktivesKonto(kontoId);
         this.aktualisiereUIMitKonto(konto);
+        window.dispatchEvent(new CustomEvent('astrie-account-changed', { detail: { kontoId } }));
         
         console.log('[Nutzerspeicher] Zu Konto gewechselt:', konto.username);
         return true;
@@ -669,6 +816,7 @@ const Nutzerspeicher = {
         }
         
         this._speichereKonten(konten);
+        window.dispatchEvent(new CustomEvent('astrie-account-changed', { detail: { kontoId } }));
         
         // Wenn dieses Konto aktiv ist, UI aktualisieren
         if (kontoId === this.getAktiveKontoId()) {
@@ -938,11 +1086,17 @@ const Nutzerspeicher = {
     async _restoreSavedBackground() {
         const settings = this.laden();
         if (settings.hintergrundWallpaperId) {
-            const url = await this.resolveWallpaperUrl(`indexeddb:${settings.hintergrundWallpaperId}`);
-            this.ladeHintergrund(url, settings.backgroundType);
+            // The setting stores the gallery item's ID; the blob ID may differ.
+            // Resolve through the gallery record first, then support older records
+            // where both IDs were the same.
+            const wallpaper = this.ladeWallpaperListe().find(item => item.id === settings.hintergrundWallpaperId);
+            const storedUrl = wallpaper?.url || `indexeddb:${settings.hintergrundWallpaperId}`;
+            const url = await this.resolveWallpaperUrl(storedUrl);
+            this.ladeHintergrund(url, settings.backgroundType || wallpaper?.type);
         } else if (settings.hintergrundUrl) {
             this.ladeHintergrund(settings.hintergrundUrl, settings.backgroundType);
         }
+        this.syncMaterialYou();
     },
 };
 
