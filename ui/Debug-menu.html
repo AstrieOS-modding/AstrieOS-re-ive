@@ -1,0 +1,48 @@
+<template id="Debug-menu-ui">
+    <main class="Debug-menu" data-debug-root role="dialog" aria-modal="true" aria-label="AstrieOS Debug-Ansicht" tabindex="-1">
+      <div class="Debug-shell">
+        <nav class="Debug-tabs" aria-label="Debug-Bereiche">
+            <button type="button" class="is-active" data-debug-tab="overview">Übersicht</button>
+            <button type="button" data-debug-tab="runtime">System</button>
+            <button type="button" data-debug-tab="mods">Modding <span data-module-count>0</span></button>
+            <button type="button" data-debug-tab="scripts">JavaScript <span data-script-count>0</span></button>
+        </nav>
+        <section class="Debug-panel is-active" data-debug-panel="overview">
+            <div class="Debug-section-heading"><div><p class="Debug-eyebrow">SITZUNG</p><h2>Auf einen Blick</h2></div><button type="button" class="Debug-refresh" data-debug-refresh>Aktualisieren</button></div>
+            <div class="Debug-stat-grid">
+                <article class="Debug-stat"><span class="Debug-stat-icon">◉</span><span class="Debug-stat-label">Browser</span><strong data-debug-value="browser">Wird ermittelt …</strong><small data-debug-value="platform">Plattform wird ermittelt</small></article>
+                <article class="Debug-stat"><span class="Debug-stat-icon">▣</span><span class="Debug-stat-label">Anzeige</span><strong data-debug-value="viewport">—</strong><small data-debug-value="screen">Bildschirm —</small></article>
+                <article class="Debug-stat"><span class="Debug-stat-icon">⌁</span><span class="Debug-stat-label">Verbindung</span><strong data-debug-value="connection">—</strong><small data-debug-value="online">—</small></article>
+                <article class="Debug-stat"><span class="Debug-stat-icon">⌘</span><span class="Debug-stat-label">JavaScript</span><strong data-debug-value="scriptTotal">—</strong><small>Projektdateien im Browser</small></article>
+            </div>
+            <div class="Debug-overview-grid">
+                <article class="Debug-card"><div class="Debug-card-heading"><div><p class="Debug-eyebrow">GERÄT</p><h3>Hardware & Anzeige</h3></div><span class="Debug-card-symbol">▤</span></div><dl class="Debug-details" data-debug-details="device"></dl></article>
+                <article class="Debug-card"><div class="Debug-card-heading"><div><p class="Debug-eyebrow">BROWSER</p><h3>Umgebung</h3></div><span class="Debug-card-symbol">◎</span></div><dl class="Debug-details" data-debug-details="browser"></dl></article>
+            </div>
+            <p class="Debug-footnote">Browser geben Hardwaredaten nur eingeschränkt frei. Nicht verfügbare Angaben werden nicht geschätzt.</p>
+            <div class="Debug-performance" aria-label="Live-Performance">
+                <article class="Debug-chart"><div class="Debug-chart-heading"><span>Bildrate · ungefähr</span><strong data-debug-fps>— FPS</strong></div><div class="Debug-chart-bars" data-debug-frame-chart></div><div class="Debug-chart-range"><span>Frame pacing</span><span data-debug-frame-range>— ms avg</span></div></article>
+                <article class="Debug-chart"><div class="Debug-chart-heading"><span>Event Loop</span><strong data-debug-delay>— ms</strong></div><div class="Debug-chart-bars Debug-chart-bars-alt" data-debug-delay-chart></div><div class="Debug-chart-range"><span>Verzögerung</span><span data-debug-delay-range>— ms max</span></div></article>
+            </div>
+        </section>
+        <section class="Debug-panel" data-debug-panel="runtime" hidden>
+            <div class="Debug-section-heading"><div><p class="Debug-eyebrow">BROWSER-UMGEBUNG</p><h2>Systemstatus</h2></div><span class="Debug-updated" data-debug-updated>—</span></div>
+            <div class="Debug-runtime-grid" data-debug-runtime></div>
+            <div class="Debug-card Debug-errors-card"><div class="Debug-card-heading"><div><p class="Debug-eyebrow">FEHLER</p><h3>JavaScript-Fehler in dieser Sitzung</h3></div><strong class="Debug-error-count" data-debug-error-count>0</strong></div><div class="Debug-error-list" data-debug-errors><p>Noch keine erfassten Fehler.</p></div></div>
+        </section>
+        <section class="Debug-panel" data-debug-panel="mods" hidden>
+            <div class="Debug-section-heading"><div><p class="Debug-eyebrow">ERWEITERUNGEN</p><h2>Modding</h2></div><span class="Debug-updated">Erweiterungsschnittstelle bereit</span></div>
+            <div class="Debug-modules" data-debug-modules></div>
+            <p class="Debug-footnote">Modding-Erweiterungen können ihren Status hier über die DebugMenu-Schnittstelle bereitstellen.</p>
+        </section>
+        <section class="Debug-panel Debug-scripts-panel" data-debug-panel="scripts" hidden>
+            <div class="Debug-section-heading"><div><p class="Debug-eyebrow">QUELLDATEIEN</p><h2>JavaScript Explorer</h2></div><span class="Debug-updated">Nur Leseansicht</span></div>
+            <div class="Debug-code-layout">
+                <aside class="Debug-file-browser"><label class="Debug-search"><span>⌕</span><input type="search" data-debug-search placeholder="Datei suchen …" aria-label="JavaScript-Dateien suchen"></label><div class="Debug-file-list" data-debug-files></div></aside>
+                <article class="Debug-code-view"><div class="Debug-code-title"><span class="Debug-file-dot"></span><strong data-debug-filename>Datei auswählen</strong><button type="button" data-debug-copy disabled>Kopieren</button></div><pre><code data-debug-source>Wähle links eine JavaScript-Datei aus, um ihren Quelltext anzuzeigen.</code></pre></article>
+            </div>
+            <p class="Debug-footnote">Die Dateien werden bei Auswahl von derselben Website geladen. Der Quelltext bleibt lokal in dieser Ansicht.</p>
+        </section>
+      </div>
+    </main>
+</template>

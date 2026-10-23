@@ -7,7 +7,10 @@ const APP_SHELL = [
     '/JavaScript/Soundeffekt.js', '/JavaScript/toggle.js', '/JavaScript/Ladenoverlay.js',
     '/JavaScript/Hintergrund-tracking.js', '/JavaScript/Nutzeruhr.js', '/JavaScript/untertitlel_system.js',
     '/JavaScript/Benachrichtigen.js', '/JavaScript/Update_hernterladen.js', '/JavaScript/Einstellungen.js',
-    '/ui/Einstellungen.html', '/ui/Benachrichtigung.html', '/ui/Nutzercenter.html', '/ui/overlay/window.html'
+    '/JavaScript/Debug-menu.js', '/JavaScript/Gretter.js', '/JavaScript/Nutzerkonto.js',
+    '/JavaScript/Nutzerspeicher.js', '/JavaScript/popup.js',
+    '/ui/Einstellungen.html', '/ui/Debug-menu.html', '/ui/Ui_css/Debug-menu.css',
+    '/ui/Benachrichtigung.html', '/ui/Nutzercenter.html', '/ui/overlay/window.html'
 ];
 
 self.addEventListener('install', (event) => {

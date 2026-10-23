@@ -43,6 +43,15 @@ function User_Wallpapier() {
     }
 }
 
+function User_farbePalette(button) {
+    const el = document.querySelector('.Einstellungen-farbe-display')
+    if (el) {
+        el.classList.contains('Open') ? Sound.play('menu-close') : Sound.play('menu-open');
+        const isOpen = el.classList.toggle('Open');
+        button?.setAttribute('aria-expanded', String(isOpen));
+    }
+}
+
 function openNutzer_custom() {
     const el = document.querySelector('.Placeholder-usercustom')
     if (el) {

@@ -58,6 +58,26 @@
                     <button class="Placeholder-btn Materialyou-toggle" id="Materialyou-toggle" type="button" aria-pressed="false"><p>Material You: <span id="Materialyou">Aus</span></p></button>
                     <div class="Placeholder-btn Materialyou-source"><p>Farbe synchronisieren: <span id="Materialyou-color">Hintergrund</span></p></div>
                 </div>
+                <div class="Einstellungen-links Materialyou-live-controls">
+                    <button class="Placeholder-btn" id="Materialyou-live-toggle" type="button" aria-pressed="false"><p>Live-Hintergrund Echtzeitfarben: <span id="Materialyou-live-status">Aus</span></p></button>
+                    <div class="Placeholder-btn Materialyou-live-interval">
+                        <div class="Materialyou-live-interval-heading"><label for="Materialyou-live-interval-slider">Farbintervall</label><output id="Materialyou-live-interval-value" for="Materialyou-live-interval-slider Materialyou-live-interval-input">5 Sekunden</output></div>
+                        <input id="Materialyou-live-interval-slider" type="range" min="5" max="10000" step="1" value="5000" aria-label="Farbintervall einstellen">
+                        <div class="Materialyou-live-interval-entry"><span>5 ms</span><label class="sr-only" for="Materialyou-live-interval-input">Intervall in Millisekunden eingeben</label><input id="Materialyou-live-interval-input" type="number" min="5" max="10000" step="1" value="5000" inputmode="numeric" aria-label="Farbintervall in Millisekunden"><span>10.000 ms</span></div>
+                    </div>
+                </div>
+                <div class="Einstellungen-links">
+                    <button onclick="User_farbePalette(this)" class="Placeholder-btn" id="Palette-toggle" type="button" aria-expanded="false" aria-controls="Materialyou-palettes"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght500_GRAD0_opsz24.svg"><p>Matugen Palette: <span id="Palette-name">Farbenfroh</span></p></button>
+                </div>
+                <div class="Einstellungen-farbe-display" id="Materialyou-palettes" aria-label="Matugen Paletten" role="group">
+                    <button class="Placeholder-f-btn" type="button" data-material-you-palette="Farbenfroh"><span class="Palette-preview" aria-hidden="true"></span><p>Farbenfroh</p></button>
+                    <button class="Placeholder-f-btn" type="button" data-material-you-palette="Dominant"><span class="Palette-preview" aria-hidden="true"></span><p>Dominant</p></button>
+                    <button class="Placeholder-f-btn" type="button" data-material-you-palette="Am Hellsten"><span class="Palette-preview" aria-hidden="true"></span><p>Am Hellsten</p></button>
+                    <button class="Placeholder-f-btn" type="button" data-material-you-palette="Am Dunkelsten"><span class="Palette-preview" aria-hidden="true"></span><p>Am Dunkelsten</p></button>
+                    <button class="Placeholder-f-btn" type="button" data-material-you-palette="Am meisten gesättigten"><span class="Palette-preview" aria-hidden="true"></span><p>Am meisten gesättigten</p></button>
+                    <button class="Placeholder-f-btn" type="button" data-material-you-palette="Am wenigsten gesättigten"><span class="Palette-preview" aria-hidden="true"></span><p>Am wenigsten gesättigten</p></button>
+                    <button class="Placeholder-f-btn" type="button" data-material-you-palette="Am lebendigsten"><span class="Palette-preview" aria-hidden="true"></span><p>Am lebendigsten</p></button>
+                </div>
                 <p>Desktop</p>
                 <div class="Einstellungen-links">
                     <div onclick="User_Wallpapier()" class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght500_GRAD0_opsz24.svg"><p>Deine hintergrund!</p></div>
@@ -115,7 +135,10 @@
                 <p>Nutzbar tools</p>
                 <div class="Einstellungen-links">
                     <div class="Placeholder-btn"><p>Console log</p></div>
-                    <div class="Placeholder-btn"><p>Debug mode</p></div>
+                    <button class="Placeholder-btn Settings-debug-toggle" type="button" data-debug-mode aria-pressed="false">
+                        <span><strong>Debug mode</strong><small>Systemstatus und JavaScript-Dateien anzeigen</small></span>
+                        <span class="Settings-debug-switch" aria-hidden="true"></span>
+                    </button>
                 </div>
                 <div class="Einstellungen-links">
                     <button class="Placeholder-btn" type="button" data-debug-version-check><p>Version checker</p></button>

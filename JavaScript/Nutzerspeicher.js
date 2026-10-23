@@ -9,6 +9,8 @@ const Nutzerspeicher = {
     _wallpaperStorageReady: null,
     _wallpaperObjectUrls: new Map(),
     _materialYouSyncId: 0,
+    _materialYouLiveTimer: null,
+    _materialYouLastSavedAt: 0,
     MATERIAL_YOU_DEFAULT: '#bd82eb',
 
     /**
@@ -17,6 +19,12 @@ const Nutzerspeicher = {
     init() {
         // Lade gespeicherte Einstellungen beim Start
         const settings = this.laden();
+        this._attachMaterialYouPaletteControls();
+        this._attachMaterialYouLiveControls();
+        document.addEventListener('settings-template-ready', () => {
+            this._attachMaterialYouPaletteControls();
+            this._attachMaterialYouLiveControls();
+        }, { once: true });
 
         // Initialisiere Konten-System
         this.initialisiereKonten();
@@ -113,8 +121,122 @@ const Nutzerspeicher = {
         return settings.materialYouEnabled;
     },
 
+    setMaterialYouPalette(name) {
+        const settings = this.laden();
+        settings.materialYouPaletteName = name;
+        settings.materialYouPalette = this._createMaterialYouPalette(settings.materialYouColor || this.MATERIAL_YOU_DEFAULT, name);
+        this.speichern(settings);
+        this.syncMaterialYou();
+        this._renderMaterialYouPaletteControls();
+        return name;
+    },
+
+    _attachMaterialYouPaletteControls() {
+        const menu = document.getElementById('Materialyou-palettes');
+        if (!menu) return;
+        menu.querySelectorAll('[data-material-you-palette]').forEach(button => {
+            if (button.dataset.bound) return;
+            button.dataset.bound = 'true';
+            button.addEventListener('click', () => {
+                this.setMaterialYouPalette(button.dataset.materialYouPalette);
+                menu.classList.remove('Open');
+                document.getElementById('Palette-toggle')?.setAttribute('aria-expanded', 'false');
+            });
+        });
+        this._renderMaterialYouPaletteControls();
+    },
+
+    _renderMaterialYouPaletteControls() {
+        const menu = document.getElementById('Materialyou-palettes');
+        if (!menu) return;
+        const settings = this.laden();
+        const selected = settings.materialYouPaletteName || 'Farbenfroh';
+        const baseColor = settings.materialYouColor || this.MATERIAL_YOU_DEFAULT;
+        const name = document.getElementById('Palette-name');
+        if (name) name.textContent = selected;
+        menu.querySelectorAll('[data-material-you-palette]').forEach(button => {
+            const palette = this._createMaterialYouPalette(baseColor, button.dataset.materialYouPalette);
+            const preview = button.querySelector('.Palette-preview');
+            if (preview) {
+                preview.style.setProperty('--palette-preview-light', palette.light);
+                preview.style.setProperty('--palette-preview-dark', palette.dark);
+                preview.style.setProperty('--palette-preview-accent', palette.accent);
+            }
+            button.setAttribute('aria-pressed', String(button.dataset.materialYouPalette === selected));
+        });
+    },
+
+    _attachMaterialYouLiveControls() {
+        const toggle = document.getElementById('Materialyou-live-toggle');
+        const slider = document.getElementById('Materialyou-live-interval-slider');
+        const numberInput = document.getElementById('Materialyou-live-interval-input');
+        const valueOutput = document.getElementById('Materialyou-live-interval-value');
+        if (!toggle || !slider || !numberInput || !valueOutput) return;
+        const formatInterval = value => value < 1000
+            ? `${value} ms`
+            : `${(value / 1000).toLocaleString('de-DE', { maximumFractionDigits: 2 })} Sekunden`;
+        const render = () => {
+            const settings = this.laden();
+            const enabled = Boolean(settings.materialYouLiveEnabled);
+            const configuredInterval = Number(settings.materialYouLiveInterval);
+            const intervalValue = Number.isFinite(configuredInterval)
+                ? Math.min(10000, Math.max(5, configuredInterval))
+                : 5000;
+            const status = document.getElementById('Materialyou-live-status');
+            if (status) status.textContent = enabled ? 'An' : 'Aus';
+            toggle.setAttribute('aria-pressed', String(enabled));
+            slider.value = String(intervalValue);
+            numberInput.value = String(intervalValue);
+            valueOutput.textContent = formatInterval(intervalValue);
+        };
+        const saveInterval = value => {
+            const settings = this.laden();
+            const parsedValue = Number(value);
+            const intervalValue = String(value).trim() && Number.isFinite(parsedValue)
+                ? Math.min(10000, Math.max(5, Math.round(parsedValue)))
+                : 5000;
+            settings.materialYouLiveInterval = intervalValue;
+            this.speichern(settings);
+            render();
+            this.syncMaterialYou();
+        };
+        if (!toggle.dataset.bound) {
+            toggle.dataset.bound = 'true';
+            toggle.addEventListener('click', () => {
+                const settings = this.laden();
+                settings.materialYouLiveEnabled = !settings.materialYouLiveEnabled;
+                this.speichern(settings);
+                this.syncMaterialYou();
+                render();
+            });
+        }
+        if (!slider.dataset.bound) {
+            slider.dataset.bound = 'true';
+            slider.addEventListener('input', () => {
+                numberInput.value = slider.value;
+                valueOutput.textContent = formatInterval(Number(slider.value));
+            });
+            slider.addEventListener('change', () => saveInterval(slider.value));
+        }
+        if (!numberInput.dataset.bound) {
+            numberInput.dataset.bound = 'true';
+            numberInput.addEventListener('input', () => {
+                if (!numberInput.value) return;
+                const value = Math.min(10000, Math.max(5, Number(numberInput.value)));
+                slider.value = String(value);
+                valueOutput.textContent = formatInterval(value);
+            });
+            numberInput.addEventListener('change', () => saveInterval(numberInput.value));
+        }
+        render();
+    },
+
     syncMaterialYou() {
         const syncId = ++this._materialYouSyncId;
+        if (this._materialYouLiveTimer) {
+            clearInterval(this._materialYouLiveTimer);
+            this._materialYouLiveTimer = null;
+        }
         const settings = this.laden();
         const enabled = Boolean(settings.materialYouEnabled);
         document.documentElement.classList.toggle('material-you-enabled', enabled);
@@ -128,44 +250,71 @@ const Nutzerspeicher = {
             root.style.setProperty('--material-you-dark-text', palette.darkText);
             root.style.setProperty('--material-you-accent', palette.light);
         };
-        applyPalette(settings.materialYouPalette || this._createMaterialYouPalette(settings.materialYouColor || this.MATERIAL_YOU_DEFAULT));
+        applyPalette(settings.materialYouPalette || this._createMaterialYouPalette(settings.materialYouColor || this.MATERIAL_YOU_DEFAULT, settings.materialYouPaletteName));
+        this._renderMaterialYouPaletteControls();
 
         const background = this.hintergrundLaden();
-        if (background.type === 'video') return;
-        const source = background.url || '/Res/Bild/Hintergrund/dylan-taylor-833xr3nsO64-unsplash.jpg';
-        this.resolveWallpaperUrl(source).then(url => {
-            const image = new Image();
-            image.onload = () => {
-                try {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = canvas.height = 32;
-                    const context = canvas.getContext('2d', { willReadFrequently: true });
-                    context.drawImage(image, 0, 0, 32, 32);
-                    const pixels = context.getImageData(0, 0, 32, 32).data;
-                    let red = 0, green = 0, blue = 0, weightTotal = 0;
-                    for (let i = 0; i < pixels.length; i += 16) {
-                        const saturation = Math.max(pixels[i], pixels[i + 1], pixels[i + 2]) - Math.min(pixels[i], pixels[i + 1], pixels[i + 2]);
-                        if (pixels[i + 3] < 180) continue;
-                        const weight = 0.25 + Math.min(saturation / 100, 1);
-                        red += pixels[i] * weight; green += pixels[i + 1] * weight; blue += pixels[i + 2] * weight; weightTotal += weight;
-                    }
-                    if (!weightTotal) return;
-                    const color = `#${[red, green, blue].map(value => Math.round(value / weightTotal).toString(16).padStart(2, '0')).join('')}`;
-                    const latest = this.laden();
-                    if (!latest.materialYouEnabled || syncId !== this._materialYouSyncId) return;
-                    latest.materialYouColor = color;
-                    latest.materialYouPalette = this._createMaterialYouPalette(color);
-                    this.speichern(latest);
-                    applyPalette(latest.materialYouPalette);
-                } catch (error) {
-                    console.info('[Nutzerspeicher] Hintergrundfarbe nicht auslesbar; Akzentfarbe bleibt erhalten.', error);
+        const isVideo = background.type === 'video';
+        const media = document.querySelector(isVideo ? '.Desktop-video-wallpaper' : '.Desktop-wallpaper');
+        if (!media) return;
+
+        let frameReadFailed = false;
+        const sampleFrame = () => {
+            if (frameReadFailed || syncId !== this._materialYouSyncId) return;
+            if (isVideo && media.readyState < 2) return;
+            if (!isVideo && !media.naturalWidth) return;
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = canvas.height = 32;
+                const context = canvas.getContext('2d', { willReadFrequently: true });
+                context.drawImage(media, 0, 0, 32, 32);
+                const pixels = context.getImageData(0, 0, 32, 32).data;
+                let red = 0, green = 0, blue = 0, weightTotal = 0;
+                for (let i = 0; i < pixels.length; i += 16) {
+                    const saturation = Math.max(pixels[i], pixels[i + 1], pixels[i + 2]) - Math.min(pixels[i], pixels[i + 1], pixels[i + 2]);
+                    if (pixels[i + 3] < 180) continue;
+                    const weight = 0.25 + Math.min(saturation / 100, 1);
+                    red += pixels[i] * weight; green += pixels[i + 1] * weight; blue += pixels[i + 2] * weight; weightTotal += weight;
                 }
-            };
-            image.src = url;
-        }).catch(() => {});
+                if (!weightTotal) return;
+                const color = `#${[red, green, blue].map(value => Math.round(value / weightTotal).toString(16).padStart(2, '0')).join('')}`;
+                const latest = this.laden();
+                if (!latest.materialYouEnabled || syncId !== this._materialYouSyncId) return;
+                latest.materialYouColor = color;
+                latest.materialYouPalette = this._createMaterialYouPalette(color, latest.materialYouPaletteName);
+                applyPalette(latest.materialYouPalette);
+                const now = Date.now();
+                if (now - this._materialYouLastSavedAt >= 1000) {
+                    this.speichern(latest);
+                    this._materialYouLastSavedAt = now;
+                    this._renderMaterialYouPaletteControls();
+                }
+            } catch (error) {
+                frameReadFailed = true;
+                console.info('[Nutzerspeicher] Hintergrundframe nicht auslesbar; aktuelle Akzentfarbe bleibt erhalten.', error);
+            }
+        };
+
+        if (isVideo) {
+            if (media.readyState >= 2) sampleFrame();
+            else media.addEventListener('loadeddata', sampleFrame, { once: true });
+        } else if (media.complete && media.naturalWidth) {
+            sampleFrame();
+        } else {
+            media.addEventListener('load', sampleFrame, { once: true });
+        }
+
+        const isLiveWallpaper = isVideo || background.type === 'live';
+        if (isLiveWallpaper && settings.materialYouLiveEnabled) {
+            const configuredInterval = Number(settings.materialYouLiveInterval);
+            const interval = Number.isFinite(configuredInterval)
+                ? Math.min(10000, Math.max(5, configuredInterval))
+                : 5000;
+            this._materialYouLiveTimer = setInterval(sampleFrame, interval);
+        }
     },
 
-    _createMaterialYouPalette(hex) {
+    _createMaterialYouPalette(hex, paletteName = 'Farbenfroh') {
         const value = hex.replace('#', '');
         const red = parseInt(value.slice(0, 2), 16) / 255;
         const green = parseInt(value.slice(2, 4), 16) / 255;
@@ -180,7 +329,18 @@ const Nutzerspeicher = {
         }
         hue = (hue * 60 + 360) % 360;
         const measuredSaturation = delta === 0 ? 0 : delta / (1 - Math.abs(2 * ((max + min) / 2) - 1));
-        const saturation = Math.max(0.48, Math.min(0.78, measuredSaturation || 0.58));
+        const paletteStyles = {
+            'Farbenfroh': { saturation: 0.68, light: 0.76, dark: 0.40, hueShift: 0 },
+            'Dominant': { saturation: Math.max(0.36, Math.min(0.62, measuredSaturation || 0.50)), light: 0.72, dark: 0.38, hueShift: 0 },
+            'Am Hellsten': { saturation: 0.58, light: 0.88, dark: 0.52, hueShift: 0 },
+            'Am Dunkelsten': { saturation: 0.68, light: 0.62, dark: 0.28, hueShift: 0 },
+            'Am meisten gesättigten': { saturation: 0.90, light: 0.74, dark: 0.38, hueShift: 0 },
+            'Am wenigsten gesättigten': { saturation: 0.24, light: 0.78, dark: 0.42, hueShift: 0 },
+            'Am lebendigsten': { saturation: 0.82, light: 0.72, dark: 0.36, hueShift: 18 }
+        };
+        const style = paletteStyles[paletteName] || paletteStyles.Farbenfroh;
+        hue = (hue + style.hueShift) % 360;
+        const saturation = style.saturation;
         const toHex = lightness => {
             const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
             const section = hue / 60;
@@ -189,7 +349,7 @@ const Nutzerspeicher = {
             const match = lightness - chroma / 2;
             return `#${[r, g, b].map(channel => Math.round((channel + match) * 255).toString(16).padStart(2, '0')).join('')}`;
         };
-        return { light: toHex(0.76), lightText: toHex(0.20), dark: toHex(0.40), darkText: toHex(0.96) };
+        return { light: toHex(style.light), lightText: toHex(0.20), dark: toHex(style.dark), darkText: toHex(0.96), accent: toHex(Math.min(0.82, style.light + 0.06)) };
     },
 
     /**

@@ -48,3 +48,42 @@
     font-weight: 700;
     src: url(Google-sans/GoogleSans-Bold.ttf);
 }
+
+/* Monospace ding lol
+    Jetbrains Mono
+*/
+@font-face {
+    font-family: Jetbrains-mono;
+    font-display: swap;
+    font-weight: 400;
+    src: url(/Res/Font/JetBrains_Mono/static/JetBrainsMono-Regular.ttf);
+}
+
+@font-face {
+    font-family: Jetbrains-mono;
+    font-display: swap;
+    font-weight: 500;
+    src: url(/Res/Font/JetBrains_Mono/static/JetBrainsMono-Medium.ttf);
+}
+
+@font-face {
+    font-family: Jetbrains-mono;
+    font-display: swap;
+    font-weight: 600;
+    src: url(/Res/Font/JetBrains_Mono/static/JetBrainsMono-SemiBold.ttf);
+}
+
+@font-face {
+    font-family: Jetbrains-mono;
+    font-display: swap;
+    font-weight: 700;
+    src: url(Res/Font/JetBrains_Mono/static/JetBrainsMono-Bold.ttf);
+}
+
+/* Monocraft */
+@font-face {
+    font-family: Monocraft;
+    font-display: swap;
+    font-weight: 400;
+    src: url(/Res/Font/Monocraft-ttf/Monocraft.ttf);
+}
