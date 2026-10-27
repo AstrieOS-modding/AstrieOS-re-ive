@@ -1,0 +1,32 @@
+<template id="Changelog_md_ui">
+    <div class="Changelogmd_overlay" hidden role="dialog" aria-modal="true" aria-label="Änderungsprotokoll">
+        <button class="Placeholder-close" data-changelog-close type="button" aria-label="Änderungsprotokoll schließen"><img class="Placeholder-icon" src="/Res/Bild/Icon/Nutzercenter/close_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" alt=""></button>
+        <div class="Changelogmd_content">
+            <div class="Changelogmd_topbar">
+                <button class="Changelogmd_backwards" type="button" aria-label="Älterer Eintrag"><span class="mdb_version"></span></button>
+                <div class="Changelogmd_center"><p><span class="mdb_topbar_v"></span></p></div>
+                <button class="Changelogmd_forwards" type="button" aria-label="Neuerer Eintrag"><span class="mdb_f_version"></span></button>
+            </div>
+
+            <div class="Changelogmd-scroll">
+                <div class="Changelogmd_header">
+                    <div class="Changelogmd_h_titelbilder">
+                        <img class="Header-img" src="/Res/Bild/Hintergrund/Default-Banner.png">
+                    </div>
+                    <div class="Changelog_h_titel">
+                        <div class="Changelogmd_header">
+                            <p><span class="md_titel">Whats up my dudes!</span></p>
+                        </div>
+                        <div class="Changelog_tags">
+                            <span class="Changelog_release-tag" data-changelog-release-tag hidden></span>
+                            <time class="Changelog_release-date" data-changelog-release-date hidden></time>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="Changelogmd-main-content"></div>
+            </div>
+
+        </div>
+    </div>
+</template>

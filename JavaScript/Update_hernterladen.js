@@ -1,57 +1,73 @@
-/*
- * A browser cannot replace files on the server. Netlify deploys the new source;
- * this module downloads that deployed app shell into a waiting service worker.
- */
+/* Checks the deployed app version and installs updates through the service worker. */
 const AppUpdater = {
     registration: null,
+    pendingVersion: '',
+    greeted: false,
+    checking: false,
     reloadRequested: false,
+    seenVersionKey: 'astrieos-changelog-seen-version',
 
     init() {
         if (!('serviceWorker' in navigator)) return;
-        navigator.serviceWorker.register('/service-worker.js', { updateViaCache: 'none' })
-            .then((registration) => {
-                this.registration = registration;
-                if (registration.waiting) this._showReady(registration.waiting);
-                registration.addEventListener('updatefound', () => this._watchInstallingWorker(registration));
-            })
-            .catch((error) => console.warn('Update-Service ist nicht verfügbar.', error));
-
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             if (this.reloadRequested) window.location.reload();
         });
-        document.addEventListener('app-update-request', (event) => {
-            event.preventDefault();
-            this.downloadUpdate(event.detail.release);
+        navigator.serviceWorker.register('/service-worker.js', { updateViaCache: 'none' })
+            .then(async registration => {
+                this.registration = registration;
+                registration.addEventListener('updatefound', () => this._watchInstallingWorker(registration));
+                await this.checkVersion();
+                window.setInterval(() => this.checkVersion(), 10 * 60 * 1000);
+                document.addEventListener('app-update-request', event => {
+                    event.preventDefault();
+                    this.checkVersion(true);
+                });
+            })
+            .catch(error => console.warn('Update-Service ist nicht verfügbar.', error));
+        window.addEventListener('astrie-session-started', () => {
+            this.greeted = true;
+            this.showPendingChangelog();
         });
-        if (sessionStorage.getItem('astrieos-update-reloaded') === 'true') {
-            sessionStorage.removeItem('astrieos-update-reloaded');
-            this._announceCurrentVersion();
+    },
+
+    async checkVersion(manual = false) {
+        if (this.checking) return;
+        this.checking = true;
+        try {
+            const response = await fetch(`/version.json?check=${Date.now()}`, { cache: 'no-store' });
+            if (!response.ok) throw new Error(`version.json antwortet mit ${response.status}`);
+            const { version } = await response.json();
+            if (!version) throw new Error('Version fehlt in version.json');
+            const seen = localStorage.getItem(this.seenVersionKey)
+                || document.querySelector('meta[name="astrieos-version"]')?.content
+                || version;
+            if (this._isNewer(version, seen)) this.pendingVersion = version;
+            if (this.greeted) this.showPendingChangelog();
+
+            if (this.registration) {
+                await this.registration.update();
+                if (this.registration.waiting && navigator.serviceWorker.controller) {
+                    this._activateAndReload(this.registration.waiting);
+                }
+            }
+            if (manual) this._showInfo(this.pendingVersion
+                ? `Version ${this.pendingVersion} ist verfügbar. Die Seite wird mit dem neuen Build aktualisiert.`
+                : `Du verwendest Version ${version}.`);
+        } catch (error) {
+            console.warn('Versionsprüfung fehlgeschlagen.', error);
+            if (manual) this._showInfo('Die Versionsprüfung ist gerade nicht verfügbar.');
+        } finally {
+            this.checking = false;
         }
     },
 
-    async downloadUpdate(release) {
-        if (!this.registration) {
-            this._showInfo('Das Update-System wird noch gestartet. Bitte versuche es gleich noch einmal.');
-            return;
-        }
-        this._showInfo('Update wird vorbereitet …');
-        try {
-            const remoteVersion = await this._fetchDeployedVersion();
-            const currentVersion = document.querySelector('meta[name="astrieos-version"]')?.content || '0.0.0';
-            if (!this._isNewer(remoteVersion, currentVersion)) {
-                this._showInfo(`Release ${release?.tag_name || ''} gefunden, aber der neue Netlify-Build ist noch nicht bereit.`);
-                return;
-            }
-            await this.registration.update();
-            if (this.registration.waiting) {
-                this._showReady(this.registration.waiting, remoteVersion);
-            } else {
-                this._showInfo('Der neue Build wird noch geladen. Die Benachrichtigung erscheint gleich, sobald er bereit ist.');
-            }
-        } catch (error) {
-            console.warn('Update konnte nicht vorbereitet werden.', error);
-            this._showInfo('Update konnte gerade nicht vorbereitet werden.');
-        }
+    showPendingChangelog() {
+        if (!this.greeted || !this.pendingVersion) return;
+        const version = this.pendingVersion;
+        this.pendingVersion = '';
+        localStorage.setItem(this.seenVersionKey, version);
+        if (window.Changelog) window.Changelog.open(version).catch(error => console.warn('[Changelog]', error));
+        else window.setTimeout(() => window.Changelog?.open(version), 500);
     },
 
     _watchInstallingWorker(registration) {
@@ -59,48 +75,17 @@ const AppUpdater = {
         if (!worker) return;
         worker.addEventListener('statechange', () => {
             if (worker.state === 'installed' && navigator.serviceWorker.controller) {
-                this._showReady(worker);
+                if (registration.waiting) this._activateAndReload(registration.waiting);
             }
         });
     },
 
-    async _fetchDeployedVersion() {
-        const response = await fetch(`/version.json?check=${Date.now()}`, { cache: 'no-store' });
-        if (!response.ok) throw new Error('version.json konnte nicht geladen werden');
-        const data = await response.json();
-        if (!data.version) throw new Error('Version fehlt');
-        return data.version;
-    },
-
-    _showReady(worker, version = '') {
-        this._showToast('Hey! Update ist fertig', `Version ${version || 'neu'} ist bereit. Aktuelle Version behalten oder Seite neu laden?`, [
-            { label: 'Seite neu laden', primary: true, action: () => this._activateAndReload(worker) },
-            { label: 'Später', action: () => {} }
-        ]);
-        if (typeof Sound !== 'undefined') Sound.play('notification-done');
-    },
-
     _activateAndReload(worker) {
         this.reloadRequested = true;
-        sessionStorage.setItem('astrieos-update-reloaded', 'true');
         worker.postMessage({ type: 'SKIP_WAITING' });
     },
 
-    async _announceCurrentVersion() {
-        try {
-            const version = await this._fetchDeployedVersion();
-            this._showToast('Update fertig!', `Du verwendest jetzt die neueste Version (${version}).`, [{ label: 'Super', action: () => {} }]);
-            if (typeof Sound !== 'undefined') Sound.play('notification-done');
-        } catch {
-            this._showToast('Update fertig!', 'Du verwendest jetzt die neueste Version.', [{ label: 'Super', action: () => {} }]);
-        }
-    },
-
     _showInfo(message) {
-        this._showToast('Update', message, [{ label: 'OK', action: () => {} }]);
-    },
-
-    _showToast(title, body, actions) {
         let stack = document.querySelector('.Release-toast-stack');
         if (!stack) {
             stack = document.createElement('div');
@@ -110,28 +95,26 @@ const AppUpdater = {
         }
         const toast = document.createElement('article');
         toast.className = 'Release-toast';
-        toast.innerHTML = '<img src="/Res/Bild/Icon/Benachrichtige/update_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" alt=""><div class="Release-toast-content"><p class="Release-toast-title"></p><p class="Release-toast-body"></p><div class="Release-toast-actions"></div></div><button class="Release-toast-close" type="button" aria-label="Benachrichtigung schließen">×</button>';
-        toast.querySelector('.Release-toast-title').textContent = title;
-        toast.querySelector('.Release-toast-body').textContent = body;
-        const close = () => { toast.classList.add('is-leaving'); window.setTimeout(() => toast.remove(), 220); };
-        toast.querySelector('.Release-toast-close').addEventListener('click', close);
-        actions.forEach((item) => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = item.primary ? 'Release-toast-action' : 'Release-toast-later';
-            button.textContent = item.label;
-            button.addEventListener('click', () => { item.action(); close(); });
-            toast.querySelector('.Release-toast-actions').append(button);
-        });
+        const body = document.createElement('p');
+        body.className = 'Release-toast-body';
+        body.textContent = message;
+        const close = document.createElement('button');
+        close.className = 'Release-toast-close';
+        close.type = 'button';
+        close.setAttribute('aria-label', 'Schließen');
+        close.textContent = '×';
+        close.addEventListener('click', () => toast.remove());
+        toast.append(body, close);
         stack.append(toast);
     },
 
     _isNewer(candidate, current) {
-        const parse = (value) => String(value).replace(/^v/i, '').match(/\d+/g)?.slice(0, 3).map(Number) || [];
+        const parse = value => String(value).replace(/^v/i, '').match(/\d+/g)?.map(Number) || [];
         const next = parse(candidate);
-        const installed = parse(current);
-        for (let index = 0; index < Math.max(next.length, installed.length, 3); index += 1) {
-            const difference = (next[index] || 0) - (installed[index] || 0);
+        const previous = parse(current);
+        if (!next.length || !previous.length) return false;
+        for (let index = 0; index < Math.max(next.length, previous.length); index += 1) {
+            const difference = (next[index] || 0) - (previous[index] || 0);
             if (difference) return difference > 0;
         }
         return false;
@@ -139,3 +122,4 @@ const AppUpdater = {
 };
 
 AppUpdater.init();
+window.AppUpdater = AppUpdater;

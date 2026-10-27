@@ -38,11 +38,11 @@ const Sound = {
 Sound.init();
 
 document.addEventListener('mouseover', (e) => {
-    const el = e.target.closest('button, .Topbar-btn, .Taskbar-app, .Placeholder-btn, a, .Benachricht-btn, .Benachricht-clear-btn, .Benachricht-clear, .Hintergrund-nutzer-upload, .Hintergrund-nutzer-wallhaven');
+    const el = e.target.closest('button, .Topbar-btn, .Taskbar-app, .Placeholder-btn, a, .Benachricht-btn, .Benachricht-clear-btn, .Benachricht-clear, .Hintergrund-nutzer-upload, .Hintergrund-nutzer-wallhaven, .Hintergrund-audio-erlauben');
     if (el) Sound.play('default-hover');
 });
 
 document.addEventListener('click', (e) => {
-    const el = e.target.closest('button, .Topbar-btn, .Taskbar-app, .Placeholder-btn, a, .Benachricht-clear-btn, .Benachricht-clear, .Hintergrund-nutzer-upload, .Hintergrund-nutzer-wallhaven');
+    const el = e.target.closest('button, .Topbar-btn, .Taskbar-app, .Placeholder-btn, a, .Benachricht-clear-btn, .Benachricht-clear, .Hintergrund-nutzer-upload, .Hintergrund-nutzer-wallhaven, .Hintergrund-audio-erlauben');
     if (el) Sound.play('default-select');
 });

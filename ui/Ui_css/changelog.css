@@ -1,0 +1,164 @@
+.Changelogmd_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    backdrop-filter: blur(18px);
+    background-color: rgba(0, 0, 0, 0.50);
+    color: #ffffff;
+    z-index: 10000000;
+    opacity: 0;
+    transition: opacity 0.18s ease;
+}
+
+.Changelogmd_overlay[hidden] { display: none; }
+.Changelogmd_overlay.is-visible { opacity: 1; }
+.Changelogmd_content {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.Changelogmd_overlay.is-visible .Changelogmd_content { opacity: 1; transform: translateY(0) scale(1); }
+body.changelog-open { overflow: hidden; }
+
+.Placeholder-close {
+    position: fixed;
+    display: flex;
+    top: 14px;
+    right: 24px;
+    padding: 12px 12px;
+    border-radius: 14px;
+    border: none;
+    background-color: rgb(0 0 0 / 0.5);
+    cursor: pointer;
+}
+
+.Placeholder-close:hover {
+    transition: all 0s ease;
+    background-color: rgb(255 255 255 / 0.28);
+}
+
+.Changelogmd_content {
+    box-sizing: border-box;
+    width: min(840px, calc(100vw - 32px));
+    padding: 8px 8px;
+    border-radius: 14px;
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.Changelogmd_topbar {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.Changelogmd_backwards, .Changelogmd_forwards {
+    padding: 8px 18px;
+    border-radius: 14px;
+    background-color: #ffffff00;
+    transition: all 0.18s ease;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    border: 0;
+}
+
+.Changelogmd_backwards:hover, .Changelogmd_forwards:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+    transition: all 0s ease;
+}
+
+.Changelogmd_center {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.Changelogmd-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 14px;
+    height: min(780px, calc(100vh - 100px));
+}
+
+.Changelogmd_h_titelbilder {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 340px;
+    border-radius: 14px;
+    background-color: #ffffff5f;
+}
+
+.Header-img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    border-radius: 14px;
+}
+
+.Changelog_h_titel {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.Changelogmd_header {
+    line-height: 0.7;
+}
+
+.Changelog_tags {
+    display: flex;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 0;
+}
+
+.Changelog_release-tag {
+    display: inline-flex;
+    padding: 4px 18px;
+    border-radius: 12px;
+    background-color: #f8a7ff;
+    color: #533456;
+    font-weight: 500;
+    line-height: 1.3;
+}
+.Changelog_release-tag[hidden], .Changelog_release-date[hidden] { display: none; }
+
+.Changelog_release-tag.is-prerelease {
+    padding: 4px 18px;
+    border-radius: 12px;
+    background-color: #ffb7a7;
+    color: #564334;
+}
+
+.Changelog_release-date {
+    align-self: center;
+    color: rgb(255 255 255 / 0.82);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.Changelogmd-main-content { padding: 8px 18px 28px; line-height: 1.55; }
+.Changelogmd-main-content h3, .Changelogmd-main-content h4 { margin: 20px 0 8px; }
+.Changelogmd-main-content p, .Changelogmd-main-content li { line-height: 1.55; }
+.Changelogmd-main-content li { margin-left: 22px; }
+.Changelogmd-main-content p:first-child { margin-top: 0; }
+
+@media (max-width: 600px) {
+    .Changelogmd_content { padding: 8px; }
+    .Changelogmd_h_titelbilder { height: 190px; }
+    .Changelog_h_titel { font-size: 1.5rem; }
+    .Changelogmd-scroll { height: calc(100vh - 90px); }
+    .Placeholder-close { top: 8px; right: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .Changelogmd_overlay, .Changelogmd_content { transition-duration: 0.01ms; }
+}

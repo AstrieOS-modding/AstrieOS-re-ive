@@ -60,6 +60,10 @@ function openNutzer_custom() {
     }
 }
 
+function open_Changelogmk(version) {
+    window.Changelog?.open(version).catch(error => console.warn('[Changelog]', error));
+}
+
 function placeholder_notifield() {
     const el = document.querySelector('.Benachrichtigung-content')
     if (el) {

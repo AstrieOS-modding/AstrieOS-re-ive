@@ -1,0 +1,130 @@
+body {
+    padding: 0;
+    margin: 0;
+    font-family: Google-sans;
+    cursor: default;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.Changelogmd_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    backdrop-filter: blur(18px);
+    background-color: rgba(0, 0, 0, 0.50);
+    color: #ffffff;
+    z-index: 10000000;
+}
+
+.Placeholder-close {
+    position: fixed;
+    display: flex;
+    top: 14px;
+    right: 24px;
+    padding: 12px 12px;
+    border-radius: 14px;
+    background-color: rgb(0 0 0 / 0.5);
+    cursor: pointer;
+}
+
+.Placeholder-close:hover {
+    transition: all 0s ease;
+    background-color: rgb(255 255 255 / 0.28);
+}
+
+.Changelogmd_content {
+    width: 840px;
+    padding: 8px 8px;
+    border-radius: 14px;
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.Changelogmd_topbar {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.Changelogmd_backwards, .Changelogmd_forwards {
+    padding: 8px 18px;
+    border-radius: 14px;
+    background-color: #ffffff00;
+    transition: all 0.18s ease;
+    cursor: pointer;
+}
+
+.Changelogmd_backwards:hover, .Changelogmd_forwards:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+    transition: all 0s ease;
+}
+
+.Changelogmd_center {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.Changelogmd-scroll {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border-radius: 14px;
+    height: 780px;
+}
+
+.Changelogmd_h_titelbilder {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 340px;
+    border-radius: 14px;
+    background-color: #ffffff5f;
+}
+
+.Header-img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    border-radius: 14px;
+}
+
+.Changelog_h_titel {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.Changelogmd_header {
+    line-height: 0.7;
+}
+
+.Changelog_tags {
+    display: flex;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 0;
+}
+
+.tags_release {
+    padding: 4px 18px;
+    border-radius: 12px;
+    background-color: #f8a7ff;
+    color: #533456;
+    font-weight: 500;
+}
+
+.tags_pre_release {
+    padding: 4px 18px;
+    border-radius: 12px;
+    background-color: #ffb7a7;
+    color: #564334;
+}

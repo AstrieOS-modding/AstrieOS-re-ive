@@ -31,6 +31,7 @@
                         <span><strong>Version überprüfen</strong><small data-version-status>Prüft GitHub-Releases auf Wunsch.</small></span>
                     </button>
                 </div>
+                <div onclick="open_Changelogmk()" class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/description_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Änderungsprotokoll lessen!</p></div>
                 <div class="Settings-update-card" data-update-card hidden>
                     <div>
                         <strong data-update-title>Update verfügbar</strong>
@@ -87,6 +88,7 @@
                     <div class="Hintergrund-btn"></div>
                     <div class="Hintergrund-nutzer-tools">
                         <div class="Hintergrund-nutzer-upload" onclick="EinstellungenHintergrund.openHintergrundUpload()"><p>Laden dein Hintergrund!</p></div>
+                        <div class="Hintergrund-audio-erlauben"><p>Erlauben live Hintergrund audio: <span id="Live_wallpaper-audio">aus</span></p></div>
                         <div class="Hintergrund-nutzer-wallhaven" onclick="WallhavenManager.openWallhavenWindow()"><p>Wallhaven durchsuchen!</p></div>
                     </div>
                     <div class="Hintergrund-standard" onclick="EinstellungenHintergrund.resetHintergrund()">
@@ -94,11 +96,11 @@
                     </div>
                 </div>
                 <div class="Einstellungen-links">
-                    <div class="Placeholder-btn"><p>Hintergrund parallax: <span id="Hintergrund-tacking">18%</span></p></div>
-                    <div class="Placeholder-btn"><p>Hintergrund blur: <span id="hintergrund-blur">18px</span></p></div>
+                    <div class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/monitor_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Desktop editor!</p></div>
                 </div>
                 <div class="Einstellungen-links">
-                    <div class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/monitor_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Desktop editor!</p></div>
+                    <div class="Placeholder-btn"><p>Hintergrund parallax: <span id="Hintergrund-tacking">18%</span></p></div>
+                    <div class="Placeholder-btn"><p>Hintergrund blur: <span id="hintergrund-blur">18px</span></p></div>
                 </div>
                 <div class="Einstellungen-linie"></div>
                 <div id="Settings_audio" class="Einstellungen-header"><img class="Einstellungen-icon-header" src="/Res/Bild/Icon/EInstellungen/volume_up_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><h2>Audio</h2></div>
