@@ -21,9 +21,11 @@ const Nutzerspeicher = {
         const settings = this.laden();
         this._attachMaterialYouPaletteControls();
         this._attachMaterialYouLiveControls();
+        this._attachDeleteAllDataControl();
         document.addEventListener('settings-template-ready', () => {
             this._attachMaterialYouPaletteControls();
             this._attachMaterialYouLiveControls();
+            this._attachDeleteAllDataControl();
         }, { once: true });
 
         // Initialisiere Konten-System
@@ -43,6 +45,30 @@ const Nutzerspeicher = {
             });
 
         console.log('[Nutzerspeicher] Initialisiert. Einstellungen:', settings);
+    },
+
+    _attachDeleteAllDataControl() {
+        const button = document.getElementById('delete-all-data');
+        if (!button || button.dataset.bound) return;
+        button.dataset.bound = 'true';
+        button.addEventListener('click', async () => {
+            if (Math.random() < 0.08 && window.KernelDied) {
+                window.KernelDied.startCrashSequence();
+                return;
+            }
+            const confirmed = window.confirm('Wirklich ALLE AstrieOS-Daten und gespeicherten Hintergründe löschen?');
+            if (!confirmed) return;
+            try {
+                localStorage.clear();
+                await new Promise(resolve => {
+                    const request = indexedDB.deleteDatabase(this.WALLPAPER_DB_NAME);
+                    request.onsuccess = request.onerror = request.onblocked = () => resolve();
+                });
+            } catch (error) {
+                console.error('[Nutzerspeicher] Daten konnten nicht vollständig gelöscht werden:', error);
+            }
+            window.location.href = '/';
+        });
     },
 
     /**
