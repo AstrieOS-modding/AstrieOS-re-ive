@@ -264,14 +264,16 @@ body {
     justify-content: center;
     align-content: center;
     padding: 8px 18px;
-    backdrop-filter: blur(18px);
+    backdrop-filter: blur(8px);
     border-radius: 18px;
     background-color: rgb(0 0 0 / 0.18);
     transition: all 0.18s ease;
 }
 
 .Topbar-content:hover {
+    backdrop-filter: blur(18px);
     background-color: rgb(0 0 0 / 0.38);
+    transition: all 0s ease;
 }
 
 .Topbar-links, .Topbar-rechts {
@@ -282,6 +284,7 @@ body {
 .Topbar-linie {
     height: 100%;
     width: 2px;
+    border-radius: 8px;
     background-color: rgb(255 255 255 / 0.28);
 }
 
@@ -356,13 +359,15 @@ body {
     gap: 8px;
     padding: 8px 18px;
     border-radius: 18px;
-    backdrop-filter: blur(18px);
+    backdrop-filter: blur(8px);
     background-color: rgb(0 0 0 / 0.18);
     transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .Taskbar-content:hover {
+    backdrop-filter: blur(18px);
     background-color: rgb(0 0 0 / 0.38);
+    transition: all 0s ease;
 }
 
 .Taskbar-app {
@@ -385,8 +390,8 @@ body {
 
 .PLaceholder-nutzercenter.Open, .Einstellungen-placeholder.Open {
     opacity: 1;
-    backdrop-filter: blur(18px);
-    background-color: rgb(0 0 0 / 0.28);
+    backdrop-filter: blur(var(--hintergrund-blur, 18px));
+    background-color: rgb(0 0 0 / 0.38);
     pointer-events: all;
 }
 
@@ -457,7 +462,7 @@ body {
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 14px;
     padding: 8px 18px;
     border-radius: 14px;
     background-color: rgb(0 0 0 / 0.48);
@@ -922,6 +927,30 @@ button.Placeholder-d-btn {
     background-color: rgb(255 255 255 / 0.28);
 }
 
+.Live-wallpaper-audio-controls {
+    display: flex;
+    flex: 1 1 100%;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.Live-wallpaper-audio-controls button {
+    color: inherit;
+    font: inherit;
+}
+
+.Live-wallpaper-audio-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.Live-wallpaper-volume-control {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
 .Hintergrund-nutzer-wallhaven {
     width: 100%;
     box-sizing: border-box;
@@ -1140,6 +1169,64 @@ button.Placeholder-d-btn {
     background-color: rgb(255 255 255 / 0.45);
 }
 
+.hintergrund-tracking-silder, .hintergrund-blur-silder, .Musik-involume, .Musik-volume, .Musik-effekt, .Live-wallpaper {
+    appearance: none;
+    width: 100%;
+    height: 48px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    outline: none;
+    border-radius: 4px;
+    background-color: rgb(0 0 0 / 0.48);
+}
+
+.hintergrund-tracking-silder::-webkit-slider-thumb, .hintergrund-blur-silder::-webkit-slider-thumb, .Musik-involume::-webkit-slider-thumb, .Musik-volume::-webkit-slider-thumb, .Musik-effekt::-webkit-slider-thumb, .Live-wallpaper::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 48px;
+    width: 8px;
+    border-radius: 22px;
+    background-color: #ffffff70;
+    transition: all 0.18s ease;
+    cursor: col-resize;
+}
+
+.hintergrund-tracking-silder::-webkit-slider-thumb:hover, .hintergrund-blur-silder::-webkit-slider-thumb:hover, .Musik-involume::-webkit-slider-thumb:hover, .Musik-volume::-webkit-slider-thumb:hover, .Musik-effekt::-webkit-slider-thumb:hover, .Live-wallpaper::-webkit-slider-thumb:hover {
+    transition: all 0s ease;
+    background-color: #ffffff;
+}
+
+.hintergrund-tracking-silder::-moz-range-thumb, .hintergrund-blur-silder::-moz-range-thumb, .Musik-involume::-moz-range-thumb, .Musik-volume::-moz-range-thumb, .Musik-effekt::-moz-range-thumb, .Live-wallpaper::-moz-range-thumb {
+    width: 8px;
+    height: 32px;
+    border: 0;
+    border-radius: 22px;
+    background-color: #ffffff70;
+    cursor: col-resize;
+}
+
+.hintergrund-tracking-silder::-moz-range-thumb:hover, .hintergrund-blur-silder::-moz-range-thumb:hover, .Musik-involume::-moz-range-thumb:hover, .Musik-volume::-moz-range-thumb:hover, .Musik-effekt::-moz-range-thumb:hover, .Live-wallpaper::-moz-range-thumb:hover {
+    background-color: #ffffff;
+}
+
+.hintergrund-tracking-silder::-moz-range-track, .hintergrund-blur-silder::-moz-range-track, .Musik-involume::-moz-range-track, .Musik-volume::-moz-range-track, .Musik-effekt::-moz-range-track, .Live-wallpaper::-moz-range-track {
+    height: 100%;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+}
+
+.sehrcooles-turlol {
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    padding: 180px 18px;
+}
+
+.sehrcooles-turlol-btn {
+    cursor: pointer;
+}
+
 .Window-outline.Open , .Window-content.Open {
     opacity: 1;
     pointer-events: all;
@@ -1285,7 +1372,9 @@ button.Placeholder-d-btn {
 }
 
 .Benachrichtigung-content:hover {
+    backdrop-filter: blur(18px);
     background-color: rgb(0 0 0 / 0.38);
+    transition: all 0s ease;
 }
 
 .Benachrichtigung-content {
@@ -1299,7 +1388,7 @@ button.Placeholder-d-btn {
     width: 34rem;
     padding: 8px 18px;
     border-radius: 14px;
-    backdrop-filter: blur(18px);
+    backdrop-filter: blur(8px);
     background-color: rgb(0 0 0 / 0.18);
     color: #ffffff;
 }

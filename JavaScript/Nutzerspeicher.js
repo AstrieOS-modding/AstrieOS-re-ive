@@ -441,6 +441,12 @@ const Nutzerspeicher = {
 
         if (!imgElement) return;
 
+        const savedSettings = this.laden();
+        if (videoElement) {
+            videoElement.volume = Math.max(0, Math.min(100, Number(savedSettings.liveWallpaperVolume ?? 12))) / 100;
+            videoElement.muted = type !== 'video' || !savedSettings.liveWallpaperAudioEnabled;
+        }
+
         // Standard: Bild anzeigen, Video verstecken
         if (imgElement) imgElement.style.display = 'block';
         if (videoElement) {
@@ -466,6 +472,7 @@ const Nutzerspeicher = {
                             imgElement.style.display = 'block';
                         }
                     });
+                    document.dispatchEvent(new Event('background-changed'));
                 }
                 break;
 

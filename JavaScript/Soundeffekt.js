@@ -5,7 +5,8 @@ const Sound = {
     init() {
         const names = [
             'cursor-tap', 'default-hover', 'default-select', 'menu-close', 'menu-open',
-            'notification-default', 'notification-done', 'notification-error', 'notification-cancel'
+            'notification-default', 'notification-done', 'notification-error', 'notification-cancel',
+            'noclick-hover', 'noclick-select', 'notch-tick'
         ];
         const basePath = '/Res/Audio/Soundeffekt/System/';
 
@@ -17,13 +18,20 @@ const Sound = {
         });
     },
 
-    play(name) {
+    play(name, playbackRate = 1) {
         const audio = this.sounds[name];
         if (!audio) return;
 
         const clone = audio.cloneNode();
         clone.volume = this.volume;
+        clone.playbackRate = Math.max(0.75, Math.min(1.25, playbackRate));
         clone.play().catch(() => {});
+    },
+
+    playSliderTick(value, min, max) {
+        const progress = max > min ? (value - min) / (max - min) : 0.5;
+        // Keep the pitch range subtle while still following the slider position.
+        this.play('notch-tick', 0.88 + Math.max(0, Math.min(1, progress)) * 0.24);
     },
 
     setVolume(val) {

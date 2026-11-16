@@ -88,7 +88,11 @@
                     <div class="Hintergrund-btn"></div>
                     <div class="Hintergrund-nutzer-tools">
                         <div class="Hintergrund-nutzer-upload" onclick="EinstellungenHintergrund.openHintergrundUpload()"><p>Laden dein Hintergrund!</p></div>
-                        <div class="Hintergrund-audio-erlauben"><p>Erlauben live Hintergrund audio: <span id="Live_wallpaper-audio">aus</span></p></div>
+                        <div class="Live-wallpaper-audio-controls">
+                            <button class="Hintergrund-audio-erlauben" id="Live_wallpaper-audio-toggle" type="button" aria-pressed="false" disabled>
+                                <p>Live-Hintergrund-Audio: <span id="Live_wallpaper-audio">Aus</span></p>
+                            </button>
+                        </div>
                         <div class="Hintergrund-nutzer-wallhaven" onclick="WallhavenManager.openWallhavenWindow()"><p>Wallhaven durchsuchen!</p></div>
                     </div>
                     <div class="Hintergrund-standard" onclick="EinstellungenHintergrund.resetHintergrund()">
@@ -99,19 +103,48 @@
                     <div class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/monitor_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Desktop editor!</p></div>
                 </div>
                 <div class="Einstellungen-links">
-                    <div class="Placeholder-btn"><p>Hintergrund parallax: <span id="Hintergrund-tacking">18%</span></p></div>
-                    <div class="Placeholder-btn"><p>Hintergrund blur: <span id="hintergrund-blur">18px</span></p></div>
+                     <div class="Placeholder-btn">
+                        <p>Hintergrund parallax: <span id="Hintergrund-tacking">18%</span></p>
+                        <input id="hintergrund-tracking-silder-id" class="hintergrund-tracking-silder" type="range" value="18" min="0" max="100">
+                    </div>
+                    <div class="Placeholder-btn">
+                        <p>Hintergrund blur: <span id="hintergrund-blur">18px</span></p>
+                        <input id="hintergrund-blur-silder-id" class="hintergrund-blur-silder" type="range" value="0" min="0" max="100">
+                    </div>
+                </div>
+                <p>osu! misc</p>
+                <div class="Einstellungen-links">
+                    <div class="Placeholder-btn"><p>Beatmap video: <span id="osu-beatmap-video">aus</span></p></div>
+                    <div class="Placeholder-btn"><p>Beatmap storyboard: <span id="osu-beatmap-storyboard">aus</span></p></div>
                 </div>
                 <div class="Einstellungen-linie"></div>
                 <div id="Settings_audio" class="Einstellungen-header"><img class="Einstellungen-icon-header" src="/Res/Bild/Icon/EInstellungen/volume_up_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><h2>Audio</h2></div>
                 <p>Lautstarke</p>
                 <div class="Einstellungen-links">
-                    <div class="Placeholder-btn"><p>Volume: <span id="Volume">24%</span></p></div>
-                    <div class="Placeholder-btn"><p>Volume inaktiv: <span id="Volume-inaktiv">8%</span></p></div>
+                    <div class="Placeholder-btn">
+                        <p>Volume: <span id="Volume">24%</span></p>
+                        <input id="Musik-volume-id" class="Musik-volume" type="range" value="24" min="1" max="100">
+                    </div>
+                    <div class="Placeholder-btn">
+                        <p>Volume inaktiv: <span id="Volume-inaktiv">8%</span></p>
+                        <input id="Musik-involume-id" class="Musik-involume" type="range" value="8" min="1" max="100">
+                    </div>
+                </div>
+                <div class="Einstellungen-links">
+                    <div class="Placeholder-btn">
+                        <p>Live wallpaper: <span id="Live-wallpaper-nummer">12%</span></p>
+                        <input id="Live-wallpaper-id" class="Live-wallpaper" type="range" value="12" min="0" max="100" aria-label="Live-Hintergrund-Lautstärke" disabled>
+                    </div>
+                </div>
+                <div class="Einstellungen-links">
+                    <div class="Placeholder-btn">
+                        <p>Sound effekt: <span id="Volume-effekt">24%</span></p>
+                        <input id="Musik-effekt-id" class="Musik-effekt" type="range" value="24" min="1" max="100">
+                    </div>
                 </div>
                 <p>Musikplayer</p>
                 <div class="Einstellungen-links">
-                    <div class="Placeholder-btn"><img class="Placeholder-icon" src="/Res/Bild/Icon/EInstellungen/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght500_GRAD0_opsz24.svg"><p>Crossfaded: <span id="Musikplayer-effekt">Crosfaded</span></p></div>
+                    <div class="Placeholder-btn"><p>Crossfaded: <span id="Musikplayer-effekt">aus</span></p></div>
                     <div class="Placeholder-btn"><p>Musik effekt in-aktiv: <span id="Musikplayer-inaktiv-effekt">Keine</span></p></div>
                 </div>
                 <div class="Einstellungen-links">
@@ -155,6 +188,11 @@
                 <div class="Einstellungen-links">
                     <div class="Placeholder-d-btn"><p>alle Musik playlist LÖSCHEN</p></div>
                     <div class="Placeholder-d-btn"><p>alle Modding loader LÖSCHEN</p></div>
+                </div>
+                <div class="sehrcooles-turlol">
+                    <div class="sehrcooles-turlol-btn">
+                        <img class="sehrcooles-turlol-animations" width="64" height="64px" src="/Res/Bild/pixel animation/untitled_0001.png">
+                    </div>
                 </div>
             </div>
         </div>

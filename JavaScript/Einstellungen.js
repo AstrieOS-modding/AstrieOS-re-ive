@@ -1,4 +1,4 @@
-/* Settings-only wiring for version controls and safe update-debug tools. */
+ /* Settings-only wiring for version controls and safe update-debug tools. */
 const SettingsDebugTools = {
     initialized: false,
 
@@ -47,7 +47,162 @@ const SettingsDebugTools = {
     }
 };
 
+const SettingsSliders = {
+    initialized: false,
+    defaults: {
+        backgroundTracking: 18,
+        backgroundBlur: 18,
+        musicVolume: 24,
+        inactiveVolume: 8,
+        effectVolume: 24
+    },
+
+    init() {
+        const attach = () => {
+            if (this.initialized || !document.getElementById('hintergrund-tracking-silder-id')) return;
+            this.initialized = true;
+            const controls = [
+                ['hintergrund-tracking-silder-id', 'backgroundTracking', value => `${value}%`, value => {
+                    window.BackgroundTracking?.setAmount(value);
+                }],
+                ['hintergrund-blur-silder-id', 'backgroundBlur', value => `${value}px`, value => {
+                    document.documentElement.style.setProperty('--hintergrund-blur', `${value}px`);
+                }],
+                ['Musik-volume-id', 'musicVolume', value => `${value}%`, value => {
+                    document.querySelectorAll('audio[data-music-player]').forEach(audio => audio.volume = value / 100);
+                }],
+                ['Musik-involume-id', 'inactiveVolume', value => `${value}%`, () => {}],
+                ['Musik-effekt-id', 'effectVolume', value => `${value}%`, value => {
+                    if (typeof Sound !== 'undefined') Sound.setVolume(value / 100);
+                }]
+            ];
+
+            const settings = window.Nutzerspeicher?.laden() || {};
+            controls.forEach(([id, key, format, apply]) => {
+                const slider = document.getElementById(id);
+                if (!slider) return;
+                const output = slider.parentElement?.querySelector('p span');
+                const min = Number(slider.min);
+                const max = Number(slider.max) || 100;
+                const stored = Number(settings[key]);
+                const initial = Number.isFinite(stored) ? Math.min(max, Math.max(min, stored)) : this.defaults[key];
+                const render = save => {
+                    const value = Math.min(max, Math.max(min, Number(slider.value)));
+                    slider.value = String(value);
+                    if (output) output.textContent = format(value);
+                    apply(value);
+                    if (save && window.Nutzerspeicher) {
+                        const current = window.Nutzerspeicher.laden();
+                        current[key] = value;
+                        window.Nutzerspeicher.speichern(current);
+                    }
+                };
+                slider.value = String(initial);
+                let lastTick = 0;
+                let tickTimer = 0;
+                slider.addEventListener('input', () => {
+                    render(false);
+                    const current = window.Nutzerspeicher?.laden() || {};
+                    current[key] = Number(slider.value);
+                    window.Nutzerspeicher?.speichern(current);
+                    if (typeof Sound !== 'undefined') {
+                        window.clearTimeout(tickTimer);
+                        tickTimer = window.setTimeout(() => {
+                            const value = Number(slider.value);
+                            if (value !== lastTick) Sound.playSliderTick(value, min, max);
+                            lastTick = value;
+                        }, 35);
+                    }
+                });
+                slider.addEventListener('change', () => render(true));
+                render(false);
+            });
+
+            this._attachLiveWallpaperAudio();
+        };
+        attach();
+        document.addEventListener('settings-template-ready', attach);
+    },
+
+    _attachLiveWallpaperAudio() {
+        const toggle = document.getElementById('Live_wallpaper-audio-toggle');
+        const slider = document.getElementById('Live-wallpaper-id');
+        const output = document.getElementById('Live-wallpaper-nummer');
+        const video = document.querySelector('.Desktop-video-wallpaper');
+        if (!toggle || !slider || !output || toggle.dataset.bound) return;
+        toggle.dataset.bound = 'true';
+
+        const render = () => {
+            const settings = window.Nutzerspeicher?.laden() || {};
+            const isVideo = settings.backgroundType === 'video' && Boolean(video?.currentSrc || video?.src);
+            const enabled = Boolean(settings.liveWallpaperAudioEnabled);
+            const volume = Math.max(0, Math.min(100, Number(settings.liveWallpaperVolume ?? 12)));
+            toggle.disabled = !isVideo;
+            toggle.setAttribute('aria-pressed', String(enabled));
+            const status = document.getElementById('Live_wallpaper-audio');
+            if (status) status.textContent = enabled ? 'An' : 'Aus';
+            slider.disabled = !isVideo || !enabled;
+            slider.value = String(volume);
+            output.textContent = `${volume}%`;
+            if (video) {
+                video.volume = volume / 100;
+                video.muted = !enabled;
+            }
+        };
+        const save = values => {
+            if (!window.Nutzerspeicher) return;
+            const settings = window.Nutzerspeicher.laden();
+            Object.assign(settings, values);
+            window.Nutzerspeicher.speichern(settings);
+            render();
+        };
+
+        toggle.addEventListener('click', () => {
+            const settings = window.Nutzerspeicher?.laden() || {};
+            save({ liveWallpaperAudioEnabled: !settings.liveWallpaperAudioEnabled });
+        });
+        slider.addEventListener('input', () => {
+            const volume = Number(slider.value);
+            if (video) video.volume = volume / 100;
+            output.textContent = `${volume}%`;
+            save({ liveWallpaperVolume: volume });
+        });
+        window.addEventListener('astrie-background-changed', render);
+        video?.addEventListener('loadedmetadata', render);
+        render();
+    }
+};
+
 SettingsDebugTools.init();
+SettingsSliders.init();
+
+/* Spielt die einzelnen Turlol-PNGs als endlose Frame-Animation ab. */
+const TurlolAnimation = {
+    frameCount: 15,
+    frameDuration: 120,
+    timer: null,
+    frame: 1,
+
+    init() {
+        const attach = () => {
+            const image = document.querySelector('.sehrcooles-turlol-animations');
+            if (!image || image.dataset.animationReady) return;
+            image.dataset.animationReady = 'true';
+
+            const showFrame = () => {
+                image.src = `/Res/Bild/pixel animation/untitled_${String(this.frame).padStart(4, '0')}.png`;
+                this.frame = this.frame % this.frameCount + 1;
+            };
+            showFrame();
+            this.timer = window.setInterval(showFrame, this.frameDuration);
+        };
+
+        attach();
+        document.addEventListener('settings-template-ready', attach);
+    }
+};
+
+TurlolAnimation.init();
 
 /**
  * Einstellungen-System für Hintergrund-Verwaltung
