@@ -70,6 +70,7 @@ const SettingsSliders = {
                 }],
                 ['Musik-volume-id', 'musicVolume', value => `${value}%`, value => {
                     document.querySelectorAll('audio[data-music-player]').forEach(audio => audio.volume = value / 100);
+                    if (typeof Mediaplayer !== 'undefined') Mediaplayer.updateVolume();
                 }],
                 ['Musik-involume-id', 'inactiveVolume', value => `${value}%`, () => {}],
                 ['Musik-effekt-id', 'effectVolume', value => `${value}%`, value => {

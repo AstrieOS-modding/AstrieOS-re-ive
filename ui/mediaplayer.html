@@ -1,0 +1,39 @@
+<template id="mediaplayer-ui">
+    <div class="Mediaplayer-placeholder">
+        <div class="Mediaplayer-cover">
+            <div class="cover-overlay">
+                <img class="cover-center" src="/Res/Bild/Hintergrund/Default-Banner.png">
+            </div>
+        </div>
+        <div class="Mediaplayer-playing">
+            <p style="text-align: center; font-family: JetBrains Mono;"><span id="playing-counter">0:00 | 0:00</span></p>
+            <input class="Mediaplayer-seek" data-player-seek type="range" min="0" max="1000" value="0" aria-label="Wiedergabeposition">
+        </div>
+        <div class="Mediaplayer-box">
+            <div class="Mediaplayer-title-wrap">
+                <span class="Mediaplayer-title">wow sehr leer aus!</span>
+            </div>
+            <p class="Mediaplayer-arthur">vom: <span id="Mediaplayer-arthur-id">wow sehr leer aus!</span></p>
+            <div class="Mediaplayer-maincore">
+                <div class="Mediaplayer-maincore-left">
+                    <div onclick="Mediaplayer_dropdown()" class="Mediaplayer-maincore-btn"><img src="/Res/Bild/Icon/Mediaplayer/menu_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"></div>
+                </div>
+                <div class="Mediaplayer-maincore-center">
+                    <button class="Mediaplayer-maincore-btn" type="button" data-player-previous aria-label="Vorheriger Titel"><img src="/Res/Bild/Icon/Mediaplayer/skip_previous_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" alt=""></button>
+                    <button class="Mediaplayer-maincore-btn" type="button" data-player-toggle aria-label="Abspielen"><img data-player-toggle-icon src="/Res/Bild/Icon/Mediaplayer/play_arrow_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" alt=""></button>
+                    <button class="Mediaplayer-maincore-btn" type="button" data-player-next aria-label="Nächster Titel"><img src="/Res/Bild/Icon/Mediaplayer/skip_next_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" alt=""></button>
+                </div>
+                <div class="Mediaplayer-maincore-right">
+                    <button class="Mediaplayer-maincore-btn" type="button" data-player-shuffle aria-label="Zufallswiedergabe"><img src="/Res/Bild/Icon/Mediaplayer/shuffle_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" alt=""></button>
+                </div>
+            </div>
+            <div class="Mediaplayer-visualizer" data-visualizer-player hidden><canvas width="640" height="96" aria-hidden="true"></canvas></div>
+        </div>
+        <div class="Mediaplayer-box-menu">
+            <div class="Mediaplayer-tools">
+                <label class="Mediaplayer-nutzer-hochladen-btn"><img src="/Res/Bild/Icon/Mediaplayer/upload_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" alt=""><p>Musik, Cover oder osu!-Beatmap hinzufügen</p><input data-player-upload type="file" accept="audio/*,image/*,video/*,.osu,.osz" multiple hidden></label>
+            </div>
+            <div class="Mediaplayer-box-scroll"></div>
+        </div>
+    </div>
+</template>

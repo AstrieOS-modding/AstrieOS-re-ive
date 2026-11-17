@@ -18,12 +18,12 @@ const Sound = {
         });
     },
 
-    play(name, playbackRate = 1) {
+    play(name, playbackRate = 1, volume = this.volume) {
         const audio = this.sounds[name];
         if (!audio) return;
 
         const clone = audio.cloneNode();
-        clone.volume = this.volume;
+        clone.volume = Math.max(0, Math.min(1, volume));
         clone.playbackRate = Math.max(0.75, Math.min(1.25, playbackRate));
         clone.play().catch(() => {});
     },
@@ -46,11 +46,11 @@ const Sound = {
 Sound.init();
 
 document.addEventListener('mouseover', (e) => {
-    const el = e.target.closest('button, .Topbar-btn, .Taskbar-app, .Placeholder-btn, a, .Benachricht-btn, .Benachricht-clear-btn, .Benachricht-clear, .Hintergrund-nutzer-upload, .Hintergrund-nutzer-wallhaven, .Hintergrund-audio-erlauben');
+    const el = e.target.closest('button, .Topbar-btn, .Taskbar-app, .Placeholder-btn, a, .Benachricht-btn, .Benachricht-clear-btn, .Benachricht-clear, .Hintergrund-nutzer-upload, .Hintergrund-nutzer-wallhaven, .Hintergrund-audio-erlauben, .Mediaplayer-maincore-btn');
     if (el) Sound.play('default-hover');
 });
 
 document.addEventListener('click', (e) => {
-    const el = e.target.closest('button, .Topbar-btn, .Taskbar-app, .Placeholder-btn, a, .Benachricht-clear-btn, .Benachricht-clear, .Hintergrund-nutzer-upload, .Hintergrund-nutzer-wallhaven, .Hintergrund-audio-erlauben');
+    const el = e.target.closest('button, .Topbar-btn, .Taskbar-app, .Placeholder-btn, a, .Benachricht-clear-btn, .Benachricht-clear, .Hintergrund-nutzer-upload, .Hintergrund-nutzer-wallhaven, .Hintergrund-audio-erlauben, .Mediaplayer-maincore-btn');
     if (el) Sound.play('default-select');
 });

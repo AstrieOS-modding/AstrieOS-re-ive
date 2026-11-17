@@ -114,19 +114,28 @@
                 </div>
                 <p>osu! misc</p>
                 <div class="Einstellungen-links">
-                    <div class="Placeholder-btn"><p>Beatmap video: <span id="osu-beatmap-video">aus</span></p></div>
-                    <div class="Placeholder-btn"><p>Beatmap storyboard: <span id="osu-beatmap-storyboard">aus</span></p></div>
+                    <button class="Placeholder-btn" type="button" data-osu-setting="enabled" aria-pressed="false"><p>osu! Funktion: <span id="osu-options-user">Aus</span></p></button>
+                </div>
+                <div class="Einstellungen-links">
+                    <button class="Placeholder-btn" type="button" data-osu-setting="autoEffects" aria-pressed="false"><p>Beatmap-Effekte automatisch aktivieren: <span id="osu-beatmap-automatic">Aus</span></p></button>
+                </div>
+                <div class="Einstellungen-links">
+                    <button class="Placeholder-btn" type="button" data-osu-setting="video" aria-pressed="false"><p>Beatmap-Video: <span id="osu-beatmap-video">Aus</span></p></button>
+                    <button class="Placeholder-btn" type="button" data-osu-setting="storyboard" aria-pressed="false"><p>Beatmap-Storyboard: <span id="osu-beatmap-storyboard">Aus</span></p></button>
+                </div>
+                <div class="Einstellungen-links">
+                    <button class="Placeholder-btn" type="button" data-osu-setting="starFountains" aria-pressed="false"><p>Sternfontänen: <span id="osu-beatmap-kiaitime">Aus</span></p></button>
                 </div>
                 <div class="Einstellungen-linie"></div>
                 <div id="Settings_audio" class="Einstellungen-header"><img class="Einstellungen-icon-header" src="/Res/Bild/Icon/EInstellungen/volume_up_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><h2>Audio</h2></div>
                 <p>Lautstarke</p>
                 <div class="Einstellungen-links">
                     <div class="Placeholder-btn">
-                        <p>Volume: <span id="Volume">24%</span></p>
+                        <p>Gesamtlautstärke: <span id="Volume">24%</span></p>
                         <input id="Musik-volume-id" class="Musik-volume" type="range" value="24" min="1" max="100">
                     </div>
                     <div class="Placeholder-btn">
-                        <p>Volume inaktiv: <span id="Volume-inaktiv">8%</span></p>
+                        <p>Gesamtlautstärke (Fenster inaktiv): <span id="Volume-inaktiv">8%</span></p>
                         <input id="Musik-involume-id" class="Musik-involume" type="range" value="8" min="1" max="100">
                     </div>
                 </div>
@@ -138,18 +147,39 @@
                 </div>
                 <div class="Einstellungen-links">
                     <div class="Placeholder-btn">
+                        <p>Musik: <span id="Audio-nummer">12%</span></p>
+                        <input id="Audio-slider-id" class="Audio-slider" type="range" value="12" min="0" max="100">
+                    </div>
+                </div>
+                <div class="Einstellungen-links">
+                    <div class="Placeholder-btn">
                         <p>Sound effekt: <span id="Volume-effekt">24%</span></p>
                         <input id="Musik-effekt-id" class="Musik-effekt" type="range" value="24" min="1" max="100">
+                    </div>
+                    <div class="Placeholder-btn">
+                        <p>Treffsound (nur osu! misc btw): <span id="osu-beatmap-hitsounds-nummer">24%</span></p>
+                        <input id="osu-betamap-hitsound-id" class="osu-beatmap-hitsounds" type="range" value="24" min="1" max="100">
                     </div>
                 </div>
                 <p>Musikplayer</p>
                 <div class="Einstellungen-links">
-                    <div class="Placeholder-btn"><p>Crossfaded: <span id="Musikplayer-effekt">aus</span></p></div>
+                    <button class="Placeholder-btn" type="button" data-crossfade-toggle aria-pressed="false"><p>Crossfade: <span id="Musikplayer-effekt">Aus</span></p></button>
                     <div class="Placeholder-btn"><p>Musik effekt in-aktiv: <span id="Musikplayer-inaktiv-effekt">Keine</span></p></div>
                 </div>
                 <div class="Einstellungen-links">
-                    <div class="Placeholder-btn"><p>Visualizer: <span id="Musikplayer-visualizer">Keine</span></p></div>
-                    <div class="Placeholder-btn"><p>Visualizer placement: <span id="Visualizer-placement">Desktop</span></p></div>
+                    <button class="Placeholder-btn" type="button" data-visualizer-toggle aria-pressed="false"><p>Visualizer: <span id="Musikplayer-visualizer">Aus</span></p></button>
+                    <label class="Placeholder-btn Visualizer-placement-control" for="Visualizer-placement">Platzierung:
+                        <select id="Visualizer-placement" data-visualizer-placement>
+                            <option value="player">Mediaplayer</option>
+                            <option value="desktop">Desktop</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="Einstellungen-links">
+                    <div class="Placeholder-btn">
+                        <p>Crossfaded-Dauer: <span id="crossfaded-nummer">8 Sekunden</span></p>
+                        <input id="crossfaded-id" class="crossfaded-slider" type="range" value="0" min="0" max="15">
+                    </div>
                 </div>
                 <div class="Einstellungen-linie"></div>
                 <div class="Einstellungen-header"><img class="Einstellungen-icon-header" src="/Res/Bild/Icon/EInstellungen/edit_square_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><h2>Modding</h2></div>

@@ -64,6 +64,10 @@ const Nutzerspeicher = {
                     const request = indexedDB.deleteDatabase(this.WALLPAPER_DB_NAME);
                     request.onsuccess = request.onerror = request.onblocked = () => resolve();
                 });
+                await new Promise(resolve => {
+                    const request = indexedDB.deleteDatabase('astrieos_mediaplayer');
+                    request.onsuccess = request.onerror = request.onblocked = () => resolve();
+                });
             } catch (error) {
                 console.error('[Nutzerspeicher] Daten konnten nicht vollständig gelöscht werden:', error);
             }
@@ -137,6 +141,18 @@ const Nutzerspeicher = {
             console.error('[Nutzerspeicher] Fehler beim Laden:', error);
             return {};
         }
+    },
+
+    getSetting(key, fallback = null) {
+        const settings = this.laden();
+        return Object.prototype.hasOwnProperty.call(settings, key) ? settings[key] : fallback;
+    },
+
+    setSetting(key, value) {
+        const settings = this.laden();
+        settings[key] = value;
+        this.speichern(settings);
+        return value;
     },
 
     setMaterialYouEnabled(enabled) {

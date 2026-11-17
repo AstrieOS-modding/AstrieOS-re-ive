@@ -82,6 +82,15 @@ fetch('/ui/Benachrichtigung.html')
         document.dispatchEvent(new Event('notifications-template-ready'));
     });
 
+fetch('/ui/mediaplayer.html')
+    .then(res => res.text())
+    .then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const template = doc.querySelector('#mediaplayer-ui');
+        document.body.appendChild(template.content.cloneNode(true));
+        document.dispatchEvent(new Event('mediaplayer-template-ready'));
+    });
+
 fetch('/ui/overlay/window.html')
     .then(res => res.text())
     .then(html => {

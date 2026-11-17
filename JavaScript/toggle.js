@@ -30,6 +30,22 @@ function placeholder_setting() {
     }
 }
 
+function mediaplayer_user() {
+    const el = document.querySelector('.Mediaplayer-placeholder')
+    if (el) {
+        el.classList.contains('Open') ? Sound.play('menu-close') : Sound.play('menu-open');
+        el.classList.toggle('Open')
+    }
+}
+
+function Mediaplayer_dropdown() {
+    const el = document.querySelector('.Mediaplayer-box-menu')
+    if (el) {
+        el.classList.contains('Open') ? Sound.play('menu-close') : Sound.play('menu-open');
+        el.classList.toggle('Open')
+    }
+}
+
 function User_Wallpapier() {
     const el = document.querySelector('.Einstellungen-hintergrund-display')
     if (el) {
